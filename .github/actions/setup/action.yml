@@ -70,7 +70,7 @@ runs:
         if ! command -v sops &> /dev/null; then
           SOPS_TOOL_DIR="$HOME/.sops/${{ inputs.sops-version }}/${{ runner.os }}/bin"
 
-          # Check if SOPS already exists in the cache directory
+          # Check if tool dir already exists in the cache directory
           if [ -f "$SOPS_TOOL_DIR/sops" ]; then
             echo "SOPS binary already exists in cache"
             echo "$SOPS_TOOL_DIR" >> "$GITHUB_PATH"
@@ -104,8 +104,8 @@ runs:
         if ! command -v pkl &> /dev/null; then
           PKL_TOOL_DIR="$HOME/.pkl/${{ inputs.pkl-version }}/${{ runner.os }}/bin"
 
-          # Check if SOPS already exists in the cache directory
-          if [ -f "$SOPS_TOOL_DIR/sops" ]; then
+          # Check if tool dir already exists in the cache directory
+          if [ -f "$PKL_TOOL_DIR/sops" ]; then
             echo "PKL binary already exists in cache"
             echo "$PKL_TOOL_DIR" >> "$GITHUB_PATH"
             $PKL_TOOL_DIR/pkl --version

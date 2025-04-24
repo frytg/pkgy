@@ -36,9 +36,11 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: 🛠 Setup Cargo packages
+        working-directory: ./g3-http-proxy
         run: just setup
 
       - name: 🛠 Run Build
+        working-directory: ./g3-http-proxy
         run: just build
 
       - name: 🔑 Login to Registry
