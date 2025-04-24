@@ -1,0 +1,31 @@
+set export := true
+g3_version := "1.10.4"
+
+# run `just` in the CLI to see the list of shortcuts
+_default:
+	just --list
+
+# install all required packages using brew
+setup:
+	cargo --version
+	docker --version
+	brew install pkgconf capnp
+	brew install openssl c-ares
+	brew install lua
+	brew install python
+
+# build binary and docker image using a given version
+build version=g3_version:
+	echo "Using G3 version {{version}}"
+	-rm -rf g3
+	git clone --depth 1 --branch g3proxy-v{{version}} --quiet git@github.com:bytedance/g3.git
+	cargo build --profile release-lto --no-default-features -p g3proxy --manifest-path g3/Cargo.toml
+	./g3/target/release-lto/g3proxy --version
+	docker build -t g3proxy .
+	-echo "Image size: $(docker images g3proxy --format json | jq -r .Size)"
+
+cleanup:
+	-rm -rf g3
+	-docker rmi alpine
+	-docker rmi g3proxy
+	-docker image prune -f
