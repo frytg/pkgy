@@ -2,10 +2,10 @@ name: Containerize G3 Proxy
 
 on:
   workflow_dispatch:
-  inputs:
-    g3-version:
-      required: true
-      description: GitHub tagged version
+    inputs:
+      g3-version:
+        required: true
+        description: GitHub tagged version
 
 permissions:
   id-token: write
