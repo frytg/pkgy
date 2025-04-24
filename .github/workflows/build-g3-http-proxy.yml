@@ -28,7 +28,7 @@ jobs:
       - name: 👀 Checkout Code
         uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: false
           show-progress: false
           submodules: false
 
@@ -44,6 +44,8 @@ jobs:
       - name: 🛠 Run Build
         working-directory: ./g3-http-proxy
         run: just build "${{ inputs.g3-version }}"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: 🔑 Login to Registry
         run: echo ${{ github.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
