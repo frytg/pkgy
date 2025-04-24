@@ -1,0 +1,24 @@
+set export := true
+latest_version := "1.10.4"
+
+# run `just` in the CLI to see the list of shortcuts
+_default:
+	just --list
+
+# install all required packages using brew
+setup:
+	cargo --version
+	brew install pkgconf capnp
+	brew install openssl c-ares
+	brew install lua
+	brew install python
+
+# build binary and docker image using a given version
+build version=latest_version:
+	-rm -rf g3
+	git clone --depth 1 --branch g3proxy-v{{version}} --quiet git@github.com:bytedance/g3.git
+	cd g3
+	cargo build --profile release-lto --no-default-features -p g3proxy --manifest-path g3/Cargo.toml
+	./target/release-lto/g3proxy --version
+	cd ..
+	docker build -t g3proxy .
