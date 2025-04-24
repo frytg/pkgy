@@ -35,7 +35,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: 🛠 Setup Cargo packages
-        uses: just setup
+        run: just setup
 
       - name: 🛠 Run Build
         run: just build
