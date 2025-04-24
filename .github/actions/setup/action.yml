@@ -1,0 +1,128 @@
+name: Setup Bun, Just, PKL, SOPS
+
+# docs about composite actions https://docs.github.com/en/actions/sharing-automations/creating-actions/creating-a-composite-action
+# Metadata syntax https://docs.github.com/en/actions/sharing-automations/creating-actions/metadata-syntax-for-github-actions
+
+inputs:
+  bun-version:
+    required: false
+    default: latest
+    type: string
+  just-version:
+    required: false
+    default: 1.40.0
+    type: string
+  pkl-version:
+    required: false
+    default: 0.28.2
+    type: string
+  sops-version:
+    required: false
+    default: 3.10.1
+    type: string
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 🛠 Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: 📦 Cache Bun packages
+      uses: actions/cache@v4
+      with:
+        key: setup-bun-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}
+        path: |
+          ~/.bun/install/cache
+
+    - name: 📦🦀 Cache Rust Cargo packages
+      uses: actions/cache@v4
+      with:
+        key: setup-cargo-${{ runner.os }}-${{ inputs.just-version }}
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+
+    # https://github.com/casey/just
+    - name: 📦 Setup Just CLI
+      shell: bash
+      run: |
+        if ! command -v just &> /dev/null; then
+          cargo install --quiet just --version ${{ inputs.just-version }}
+        fi
+        just --version
+
+    - name: 📦 Cache SOPS packages
+      uses: actions/cache@v4
+      with:
+        key: setup-sops-${{ runner.os }}-${{ inputs.sops-version }}
+        path: |
+          ~/.sops/
+
+    # https://github.com/getsops/sops/releases
+    - name: 📦 Setup SOPS CLI
+      shell: bash
+      run: |
+        if ! command -v sops &> /dev/null; then
+          SOPS_TOOL_DIR="$HOME/.sops/${{ inputs.sops-version }}/${{ runner.os }}/bin"
+
+          # Check if SOPS already exists in the cache directory
+          if [ -f "$SOPS_TOOL_DIR/sops" ]; then
+            echo "SOPS binary already exists in cache"
+            echo "$SOPS_TOOL_DIR" >> "$GITHUB_PATH"
+            $SOPS_TOOL_DIR/sops --version
+          else
+            # else download and install
+            mkdir -p "$SOPS_TOOL_DIR"
+            curl -L -o sops https://github.com/getsops/sops/releases/download/v${{ inputs.sops-version }}/sops-v${{ inputs.sops-version }}.linux.amd64
+            mv sops "$SOPS_TOOL_DIR/"
+            chmod +x "$SOPS_TOOL_DIR/sops"
+
+            # add to path
+            echo "$SOPS_TOOL_DIR" >> "$GITHUB_PATH"
+            echo "SOPS added to path > $SOPS_TOOL_DIR"
+            $SOPS_TOOL_DIR/sops --version
+          fi
+        fi
+
+    - name: 📦 Cache PKL packages
+      uses: actions/cache@v4
+      with:
+        key: setup-pkl-${{ runner.os }}-${{ inputs.pkl-version }}
+        path: |
+          ~/.pkl/
+
+    # https://pkl-lang.org/main/current/pkl-cli/index.html#installation
+    # https://github.com/apple/pkl/releases
+    - name: 📦 Setup PKL CLI
+      shell: bash
+      run: |
+        if ! command -v pkl &> /dev/null; then
+          PKL_TOOL_DIR="$HOME/.pkl/${{ inputs.pkl-version }}/${{ runner.os }}/bin"
+
+          # Check if SOPS already exists in the cache directory
+          if [ -f "$SOPS_TOOL_DIR/sops" ]; then
+            echo "PKL binary already exists in cache"
+            echo "$PKL_TOOL_DIR" >> "$GITHUB_PATH"
+            $PKL_TOOL_DIR/pkl --version
+          else
+            # else download and install
+            mkdir -p "$PKL_TOOL_DIR"
+            curl -L -o pkl https://github.com/apple/pkl/releases/download/${{ inputs.pkl-version }}/pkl-linux-amd64
+            mv pkl "$PKL_TOOL_DIR/"
+            chmod +x "$PKL_TOOL_DIR/pkl"
+
+            # add to path
+            echo "$PKL_TOOL_DIR" >> "$GITHUB_PATH"
+            echo "PKL added to path > $PKL_TOOL_DIR"
+            $PKL_TOOL_DIR/pkl --version
+          fi
+        fi
+
+    - name: Activate Homebrew
+      shell: bash
+      run: eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

@@ -1,5 +1,5 @@
 set export := true
-latest_version := "1.10.4"
+g3_version := "1.10.4"
 
 # run `just` in the CLI to see the list of shortcuts
 _default:
@@ -15,7 +15,8 @@ setup:
 	brew install python
 
 # build binary and docker image using a given version
-build version=latest_version:
+build version=g3_version:
+	echo "Using G3 version {{version}}"
 	-rm -rf g3
 	git clone --depth 1 --branch g3proxy-v{{version}} --quiet git@github.com:bytedance/g3.git
 	cargo build --profile release-lto --no-default-features -p g3proxy --manifest-path g3/Cargo.toml
