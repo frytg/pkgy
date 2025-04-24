@@ -18,7 +18,7 @@ setup:
 build version=g3_version:
 	echo "Using G3 version {{version}}"
 	-rm -rf g3
-	git clone --depth 1 --branch g3proxy-v{{version}} --quiet git@github.com:bytedance/g3.git
+	git clone --depth 1 --branch g3proxy-v{{version}} --quiet https://github.com/bytedance/g3.git
 	cargo build --profile release-lto --no-default-features -p g3proxy --manifest-path g3/Cargo.toml
 	./g3/target/release-lto/g3proxy --version
 	docker build -t g3proxy .
