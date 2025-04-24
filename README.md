@@ -1,2 +1,17 @@
 # pkgy
+
 Packagy – collection of recipes and self-/ pre-compiled packaghes
+
+## Why?
+
+The reason for this repository is to provide a collection of recipes and self-/pre-compiled packages for various programming languages and tools.
+
+Sometimes one only needs
+They were primarily created for my personal and professional use, but can be used by anyone who has similar needs.
+
+Either run the build scripts yourself or use the packages from GitHub registry. They are all built using GitHub Actions (see [*Working with the Container registry*](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
+
+# License
+
+The files in this project are licensed using [The Unlicense](https://unlicense.org/).
+This applies to these files only, not the packages or tools used in the recipes, which are licensed under their respective licenses.
