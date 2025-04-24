@@ -35,7 +35,7 @@ jobs:
       - name: 🛠 Setup Code Environment
         uses: ./.github/actions/setup
 
-      - name: 🛠 Setup Cargo packages
+      - name: 🛠 Setup Cargo build helper packages
         working-directory: ./g3-http-proxy
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -43,9 +43,9 @@ jobs:
 
       - name: 🛠 Run Build
         working-directory: ./g3-http-proxy
-        run: just build "${{ inputs.g3-version }}"
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          just build "${{ inputs.g3-version }}"
 
       - name: 🔑 Login to Registry
         run: echo ${{ github.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
