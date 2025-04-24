@@ -122,7 +122,3 @@ runs:
             $PKL_TOOL_DIR/pkl --version
           fi
         fi
-
-    - name: Activate Homebrew
-      shell: bash
-      run: eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
