@@ -6,23 +6,26 @@ build_target := "${CARGO_BUILD_TARGET:-aarch64-apple-darwin}"
 _default:
 	just --list
 
-# install all required packages using brew
-setup:
+# verify the existence of critical tools
+verify:
+	@rustup --version
 	@cargo --version
+	@cross --version
 	@docker --version
+	@git --version
+
+# install all required packages using brew
+setup: verify
 	brew install pkgconf capnp c-ares
 	# brew install openssl
 	# brew install lua
 	# brew install python
 
 # build binary and docker image using a given version
-build version=g3_version:
+build version=g3_version: verify
+	@echo ""
 	@echo "Using G3 version {{version}}"
 	@echo "Veryfying existence of critical tools"
-	@cargo --version
-	@rustup --version
-	@docker --version
-	@git --version
 	@echo ""
 
 	@echo "Clone from GIT {{version}}..."
@@ -34,19 +37,23 @@ build version=g3_version:
 
 	@echo "Build with Rust for {{build_target}}..."
 	@rustup target add {{build_target}}
-	@cargo build \
+	@cross build \
 		--target {{build_target}} \
 		--profile release-lto \
 		--no-default-features \
 		--features quic,c-ares \
 		-p g3proxy \
 		--manifest-path g3/Cargo.toml
-	@mv ./g3/target/release-lto/g3proxy ./g3proxy
+	@mv ./g3/target/{{build_target}}/release-lto/g3proxy ./g3proxy
 	-@rm -rf g3
 	@./g3proxy --version
 
 	@docker build -t g3proxy --platform "linux/amd64" .
 	-@echo "Image size: $(docker images g3proxy --format json | jq -r .Size)"
+
+# list rustup targets
+targets:
+	@rustup target list
 
 cleanup:
 	-rm -rf g3

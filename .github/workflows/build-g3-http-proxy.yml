@@ -48,7 +48,9 @@ jobs:
           submodules: false
 
       - name: 🛠 Setup build helper packages
-        run: apk add --no-cache c-ares-dev cmake capnproto-dev docker git just musl-dev openssl-dev
+        run: |
+          apk add --no-cache c-ares-dev cmake capnproto-dev docker git just musl-dev openssl-dev
+          cargo install cross --git https://github.com/cross-rs/cross
 
       - name: 🛠 Run Build
         working-directory: ./g3-http-proxy
