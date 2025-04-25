@@ -36,7 +36,7 @@ build version=g3_version: verify
 
 	@echo "Build with Rust for {{build_target}}..."
 	@rustup target add {{build_target}}
-	@cross build \
+	@cargo build \
 		--target {{build_target}} \
 		--profile release-lto \
 		--no-default-features \
