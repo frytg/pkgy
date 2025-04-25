@@ -14,6 +14,8 @@ Either run the build scripts yourself or use the packages from GitHub registry. 
 
 See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy](https://github.com/users/frytg/packages?repo_name=pkgy)
 
+- [`g3-http-proxy`](./g3-http-proxy/): standalone container image with http forward proxy
+
 # License
 
 The files in this project are licensed using [The Unlicense](https://unlicense.org/).
