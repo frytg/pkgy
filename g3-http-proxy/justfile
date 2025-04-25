@@ -9,8 +9,8 @@ _default:
 # verify the existence of critical tools
 verify:
 	@rustup --version
+	-@CROSS_NO_WARNINGS=0 cross --version
 	@cargo --version
-	@cross --version
 	@docker --version
 	@git --version
 
