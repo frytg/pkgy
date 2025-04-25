@@ -7,8 +7,8 @@ _default:
 
 # install all required packages using brew
 setup:
-	cargo --version
-	docker --version
+	@cargo --version
+	@docker --version
 	brew install pkgconf capnp c-ares
 	# brew install openssl
 	# brew install lua
@@ -16,14 +16,26 @@ setup:
 
 # build binary and docker image using a given version
 build version=g3_version:
-	echo "Using G3 version {{version}}"
-	-rm -rf g3
-	git clone --depth 1 --branch g3proxy-v{{version}} --quiet https://github.com/bytedance/g3.git
-	cargo build --profile release-lto --no-default-features --features quic,c-ares,hickory -p g3proxy -p g3proxy-ctl --manifest-path g3/Cargo.toml
-	ls -al ./g3/target/release-lto/
-	./g3/target/release-lto/g3proxy --version
-	docker build -t g3proxy .
-	-echo "Image size: $(docker images g3proxy --format json | jq -r .Size)"
+	@echo "Using G3 version {{version}}"
+	@echo "Veryfying existence of critical tools"
+	@cargo --version
+	@docker --version
+	@git --version
+	@echo ""
+
+	@echo "Clone from GIT {{version}}..."
+	-@rm -rf g3
+	@git config --global advice.detachedHead false
+	@git clone --depth 1 --branch g3proxy-v{{version}} --quiet https://github.com/bytedance/g3.git
+	@echo ""
+
+	@echo "Build with Rust..."
+	cargo build --profile release-lto --no-default-features --features quic,c-ares -p g3proxy -p g3proxy-ctl --manifest-path g3/Cargo.toml
+	@ls -al ./g3/target/release-lto/
+	@./g3/target/release-lto/g3proxy --version
+
+	@docker build -t g3proxy .
+	-@echo "Image size: $(docker images g3proxy --format json | jq -r .Size)"
 
 cleanup:
 	-rm -rf g3

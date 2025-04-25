@@ -53,7 +53,7 @@ jobs:
         env:
           RUSTFLAGS: "-Ctarget-feature=-crt-static"
 
-      - name: Notify end
+      - name: 🙅 Notify end
         if: github.event_name != 'workflow_dispatch'
         run: echo "Not pushing image to registry" >> $GITHUB_STEP_SUMMARY
 
@@ -71,7 +71,7 @@ jobs:
           # Update var
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: 🏷 Tag & Push docker
+      - name: 🚀 Tag & Push docker
         if: github.event_name == 'workflow_dispatch'
         run: |
           docker tag g3proxy:latest $GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
