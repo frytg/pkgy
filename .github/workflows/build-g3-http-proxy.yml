@@ -49,7 +49,7 @@ jobs:
         working-directory: ./g3-http-proxy
         run: |
           sudo apt-get update
-          sudo apt-get install capnproto libc-ares-dev libssl-dev musl-tools openssl
+          sudo apt-get install capnproto libc-ares-dev libssl-dev musl-tools pkg-config
 
       - name: 🛠 Run Build
         working-directory: ./g3-http-proxy
