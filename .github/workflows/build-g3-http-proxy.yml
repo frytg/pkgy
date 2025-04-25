@@ -31,9 +31,6 @@ jobs:
     outputs:
       VERSION: ${{ steps.tag.outputs.VERSION }}
     timeout-minutes: 20
-    defaults:
-      run:
-        shell: bash
     container:
       image: rust:alpine
       volumes:
@@ -48,7 +45,6 @@ jobs:
 
       # https://github.com/casey/just
       - name: 📦 Setup Just CLI
-        shell: bash
         run: |
           if ! command -v just &> /dev/null; then
             cargo install --quiet just --version ${{ inputs.just-version }}
