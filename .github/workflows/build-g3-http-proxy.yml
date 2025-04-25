@@ -44,14 +44,12 @@ jobs:
       - name: 🛠 Setup Cargo build helper packages
         working-directory: ./g3-http-proxy
         run: |
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          just setup
+          sudo apt-get update
+          sudo apt-get install capnproto libc-ares-dev libssl-dev
 
       - name: 🛠 Run Build
         working-directory: ./g3-http-proxy
-        run: |
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          just build ${{ inputs.g3-version || '' }}
+        run: just build ${{ inputs.g3-version || '' }}
         env:
           RUSTFLAGS: "-Ctarget-feature=-crt-static"
 
