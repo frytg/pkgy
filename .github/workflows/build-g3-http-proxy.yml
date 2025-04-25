@@ -8,7 +8,7 @@ on:
         description: GitHub tagged version
 
 env:
-  GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}
+  GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/g3-http-proxy
 
 permissions:
   id-token: write
@@ -54,7 +54,7 @@ jobs:
         id: tag
         run: |
           # Add custom wrapper syntax
-          VERSION=v${{ inputs.g3-version }}-day$(date +%j)-run${{ github.run_number }}
+          VERSION=v${{ inputs.g3-version }}--day$(date +%Y-%m-%d)--build${{ github.run_number }}
 
           # Update var
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
