@@ -1,5 +1,7 @@
 # base on top of alpine image
-ARG ALPINE_VERSION=latest
+# https://hub.docker.com/_/alpine/
+# https://github.com/alpinelinux/docker-alpine
+ARG ALPINE_VERSION=3.21
 FROM alpine:${ALPINE_VERSION}
 
 # label container
@@ -10,10 +12,9 @@ LABEL org.opencontainers.image.description="HTTP forward proxy"
 RUN apk add --no-cache ca-certificates libgcc c-ares
 
 # copy pre-compiled binary into alpine image
-COPY ./g3proxy.yaml /etc/g3proxy.yaml
-COPY ./g3/target/release-lto/g3proxy /bin/g3proxy
-RUN chmod +x /bin/g3proxy
+COPY ./g3proxy.yml /etc/g3proxy.yml
+COPY ./g3proxy /usr/bin/g3proxy
 
 # set entry
-ENTRYPOINT ["/bin/g3proxy"]
-CMD ["--config-file", "/etc/g3proxy.yaml"]
+ENTRYPOINT ["/usr/bin/g3proxy"]
+CMD ["--config-file", "/etc/g3proxy.yml"]

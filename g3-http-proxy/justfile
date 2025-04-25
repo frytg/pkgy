@@ -19,22 +19,32 @@ build version=g3_version:
 	@echo "Using G3 version {{version}}"
 	@echo "Veryfying existence of critical tools"
 	@cargo --version
+	@rustup --version
 	@docker --version
 	@git --version
 	@echo ""
 
 	@echo "Clone from GIT {{version}}..."
-	-@rm -rf g3
+	-@rm -rf ./g3
+	-@rm -rf ./g3proxy
 	@git config --global advice.detachedHead false
 	@git clone --depth 1 --branch g3proxy-v{{version}} --quiet https://github.com/bytedance/g3.git
 	@echo ""
 
 	@echo "Build with Rust..."
-	cargo build --profile release-lto --no-default-features --features quic,c-ares -p g3proxy --manifest-path g3/Cargo.toml
-	@ls -al ./g3/target/release-lto/
-	@./g3/target/release-lto/g3proxy --version
+	rustup target add x86_64-unknown-linux-musl
+	cargo build \
+		--target x86_64-unknown-linux-musl \
+		--profile release-lto \
+		--no-default-features \
+		--features quic,c-ares \
+		-p g3proxy \
+		--manifest-path g3/Cargo.toml
+	@mv ./g3/target/release-lto/g3proxy/g3proxy ./g3proxy
+	-@rm -rf g3
+	@./g3proxy --version
 
-	@docker build -t g3proxy .
+	@docker build -t g3proxy --platform "linux/amd64" .
 	-@echo "Image size: $(docker images g3proxy --format json | jq -r .Size)"
 
 cleanup:
