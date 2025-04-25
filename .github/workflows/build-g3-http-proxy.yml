@@ -19,6 +19,7 @@ concurrency:
 
 env:
   GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/g3-http-proxy
+  PKG_JUST_VERSION: "1.40.0"
 
 permissions:
   id-token: write
@@ -47,7 +48,7 @@ jobs:
       - name: 📦 Setup Just CLI
         run: |
           if ! command -v just &> /dev/null; then
-            cargo install --quiet just --version ${{ inputs.just-version }}
+            cargo install --quiet just --version ${{ env.PKG_JUST_VERSION }}
           fi
           just --version
 
