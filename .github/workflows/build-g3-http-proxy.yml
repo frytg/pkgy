@@ -44,16 +44,14 @@ jobs:
           show-progress: false
           submodules: false
 
+      - name: 🛠 Setup Cargo build helper packages
+        run: apk add --no-cache c-ares-dev cmake capnproto-dev musl-dev openssl-dev
+
       # https://github.com/casey/just
       - name: 📦 Setup Just CLI
         run: |
-          if ! command -v just &> /dev/null; then
-            cargo install --quiet just --version ${{ env.PKG_JUST_VERSION }}
-          fi
+          cargo install --quiet just --version ${{ env.PKG_JUST_VERSION }}
           just --version
-
-      - name: 🛠 Setup Cargo build helper packages
-        run: apk add --no-cache c-ares-dev cmake capnproto-dev musl-dev openssl-dev
 
       - name: 🛠 Run Build
         working-directory: ./g3-http-proxy
