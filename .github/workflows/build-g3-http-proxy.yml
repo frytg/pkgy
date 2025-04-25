@@ -9,6 +9,7 @@ on:
       - feature/*
     paths:
       - g3-http-proxy/**
+      - .github/workflows/build-g3-http-proxy.yml
   workflow_dispatch:
     inputs:
       g3-version:
