@@ -30,7 +30,7 @@ build version=g3_version:
 	@echo ""
 
 	@echo "Build with Rust..."
-	cargo build --profile release-lto --no-default-features --features quic,c-ares -p g3proxy -p g3proxy-ctl --manifest-path g3/Cargo.toml
+	cargo build --profile release-lto --no-default-features --features quic,c-ares -p g3proxy --manifest-path g3/Cargo.toml
 	@ls -al ./g3/target/release-lto/
 	@./g3/target/release-lto/g3proxy --version
 

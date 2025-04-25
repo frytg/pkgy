@@ -13,6 +13,10 @@ on:
         required: true
         description: GitHub tagged version
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/g3-http-proxy
 
