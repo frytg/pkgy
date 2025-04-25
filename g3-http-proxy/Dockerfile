@@ -9,4 +9,5 @@ COPY ./g3proxy.yaml /etc/g3proxy.yaml
 COPY ./g3/target/release-lto/g3proxy /usr/bin/g3proxy
 RUN chmod +x /usr/bin/g3proxy
 
-CMD ["/usr/bin/g3proxy", "--config-file", "/etc/g3proxy.yaml"]
+ENTRYPOINT ["/usr/bin/g3proxy"]
+CMD ["--config-file", "/etc/g3proxy.yaml"]
