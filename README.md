@@ -1,15 +1,20 @@
 # pkgy
 
-Packagy – collection of recipes and self-/ pre-compiled packaghes
+ˈpækədʒi – collection of recipes and self-/ pre-compiled packages or recipes for it (work in progress)
 
 ## Why?
 
 The reason for this repository is to provide a collection of recipes and self-/pre-compiled packages for various programming languages and tools.
 
-Sometimes one only needs
 They were primarily created for my personal and professional use, but can be used by anyone who has similar needs.
 
 Either run the build scripts yourself or use the packages from GitHub registry. They are all built using GitHub Actions (see [*Working with the Container registry*](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
+
+## Packages
+
+See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy](https://github.com/users/frytg/packages?repo_name=pkgy)
+
+- [`g3-http-proxy`](./g3-http-proxy/): standalone container image with http forward proxy
 
 # License
 

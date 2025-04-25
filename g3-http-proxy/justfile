@@ -1,28 +1,56 @@
 set export := true
 g3_version := "1.10.4"
+build_target := "${CARGO_BUILD_TARGET:-aarch64-apple-darwin}"
 
 # run `just` in the CLI to see the list of shortcuts
 _default:
 	just --list
 
+# verify the existence of critical tools
+verify:
+	@rustup --version
+	@cargo --version
+	@docker --version
+	@git --version
+
 # install all required packages using brew
-setup:
-	cargo --version
-	docker --version
-	brew install pkgconf capnp
-	brew install openssl c-ares
-	brew install lua
-	brew install python
+setup: verify
+	brew install filosottile/musl-cross/musl-cross
+	brew install pkgconf capnp c-ares openssl
 
 # build binary and docker image using a given version
-build version=g3_version:
-	echo "Using G3 version {{version}}"
-	-rm -rf g3
-	git clone --depth 1 --branch g3proxy-v{{version}} --quiet git@github.com:bytedance/g3.git
-	cargo build --profile release-lto --no-default-features -p g3proxy --manifest-path g3/Cargo.toml
-	./g3/target/release-lto/g3proxy --version
-	docker build -t g3proxy .
-	-echo "Image size: $(docker images g3proxy --format json | jq -r .Size)"
+build version=g3_version: verify
+	@echo ""
+	@echo "Using G3 version {{version}}"
+	@echo "Veryfying existence of critical tools"
+	@echo ""
+
+	@echo "Clone from GIT {{version}}..."
+	-@rm -rf ./g3
+	-@rm -rf ./g3proxy
+	@git config --global advice.detachedHead false
+	@git clone --depth 1 --branch g3proxy-v{{version}} --quiet https://github.com/bytedance/g3.git
+	@echo ""
+
+	@echo "Build with Rust for {{build_target}}..."
+	@rustup target add {{build_target}}
+	@cargo build \
+		--target {{build_target}} \
+		--profile release-lto \
+		--no-default-features \
+		--features quic,c-ares \
+		-p g3proxy \
+		--manifest-path g3/Cargo.toml
+	@mv ./g3/target/{{build_target}}/release-lto/g3proxy ./g3proxy
+	-@rm -rf g3
+	@./g3proxy --version
+
+	@docker build -t g3proxy --platform "linux/amd64" .
+	-@echo "Image size: $(docker images g3proxy --format json | jq -r .Size)"
+
+# list rustup targets
+targets:
+	@rustup target list
 
 cleanup:
 	-rm -rf g3

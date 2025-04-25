@@ -1,0 +1,22 @@
+# docs: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+
+version: 2
+
+updates:
+  - package-ecosystem: docker
+    directory: /g3-http-proxy
+    open-pull-requests-limit: 30
+    assignees:
+      - frytg
+    schedule:
+      interval: daily
+      time: "07:00"
+
+  - package-ecosystem: github-actions
+    directory: /
+    open-pull-requests-limit: 30
+    assignees:
+      - frytg
+    schedule:
+      interval: daily
+      time: "07:00"
