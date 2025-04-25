@@ -41,7 +41,7 @@ build version=g3_version:
 		--features quic,c-ares \
 		-p g3proxy \
 		--manifest-path g3/Cargo.toml
-	@mv ./g3/target/release-lto/g3proxy/g3proxy ./g3proxy
+	@mv ./g3/target/release-lto/g3proxy ./g3proxy
 	-@rm -rf g3
 	@./g3proxy --version
 
