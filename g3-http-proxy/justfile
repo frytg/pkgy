@@ -20,7 +20,6 @@ build version=g3_version:
 	@echo "Veryfying existence of critical tools"
 	@cargo --version
 	@rustup --version
-	@openssl --version
 	@docker --version
 	@git --version
 	@echo ""
