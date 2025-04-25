@@ -17,4 +17,4 @@ COPY ./g3proxy /usr/bin/g3proxy
 
 # set entry
 ENTRYPOINT ["/usr/bin/g3proxy"]
-CMD ["/usr/bin/g3proxy", "--config-file", "/etc/g3proxy.yml"]
+CMD ["--config-file", "/etc/g3proxy.yml"]

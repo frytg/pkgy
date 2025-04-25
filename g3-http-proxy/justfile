@@ -15,10 +15,8 @@ verify:
 
 # install all required packages using brew
 setup: verify
-	brew install pkgconf capnp c-ares
-	# brew install openssl
-	# brew install lua
-	# brew install python
+	brew install filosottile/musl-cross/musl-cross
+	brew install pkgconf capnp c-ares openssl
 
 # build binary and docker image using a given version
 build version=g3_version: verify
