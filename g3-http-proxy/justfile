@@ -1,5 +1,5 @@
 set export := true
-g3_version := "1.10.4"
+default_g3_version := "1.10.4"
 build_target := "${CARGO_BUILD_TARGET:-aarch64-apple-darwin}"
 
 # run `just` in the CLI to see the list of shortcuts
@@ -12,6 +12,7 @@ verify:
 	@cargo --version
 	@docker --version
 	@git --version
+	@jq --version
 
 # install all required packages using brew
 setup: verify
@@ -19,7 +20,7 @@ setup: verify
 	brew install pkgconf capnp c-ares openssl
 
 # build binary and docker image using a given version
-build version=g3_version: verify
+build version=default_g3_version: verify
 	@echo ""
 	@echo "Using G3 version {{version}}"
 	@echo "Veryfying existence of critical tools"
@@ -52,6 +53,7 @@ build version=g3_version: verify
 targets:
 	@rustup target list
 
+# remove files and docker images
 cleanup:
 	-rm -rf g3
 	-docker rmi alpine

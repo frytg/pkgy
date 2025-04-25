@@ -1,4 +1,4 @@
-name: Containerize G3 Proxy
+name: Containerize G3 HTTP Proxy
 
 on:
   push:

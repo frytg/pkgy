@@ -1,4 +1,4 @@
-# G3 Forward Proxy Container
+# G3 HTTP Forward Proxy Container
 
 This builds the `g3proxy` project from [`bytedance/g3`](https://github.com/bytedance/g3) and provides a standalone docker container image to be used as forward proxy.
 
