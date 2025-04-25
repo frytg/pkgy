@@ -46,8 +46,14 @@ jobs:
           show-progress: false
           submodules: false
 
-      - name: 🛠 Setup Code Environment
-        uses: ./.github/actions/setup
+      # https://github.com/casey/just
+      - name: 📦 Setup Just CLI
+        shell: bash
+        run: |
+          if ! command -v just &> /dev/null; then
+            cargo install --quiet just --version ${{ inputs.just-version }}
+          fi
+          just --version
 
       - name: 🛠 Setup Cargo build helper packages
         run: apk add --no-cache c-ares-dev cmake capnproto-dev musl-dev openssl-dev
