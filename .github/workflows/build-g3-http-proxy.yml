@@ -7,6 +7,8 @@ on:
       - dev/*
       - chore/*
       - feature/*
+    paths:
+      - g3-http-proxy/**
   workflow_dispatch:
     inputs:
       g3-version:
@@ -45,7 +47,7 @@ jobs:
           submodules: false
 
       - name: 🛠 Setup Cargo build helper packages
-        run: apk add --no-cache c-ares-dev cmake capnproto-dev musl-dev openssl-dev
+        run: apk add --no-cache c-ares-dev cmake capnproto-dev docker musl-dev openssl-dev
 
       # https://github.com/casey/just
       - name: 📦 Setup Just CLI
