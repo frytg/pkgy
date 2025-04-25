@@ -34,6 +34,10 @@ jobs:
     defaults:
       run:
         shell: bash
+    container:
+      image: rust:alpine
+      volumes:
+        - /usr/local/cargo/registry:/usr/local/cargo/registry
     steps:
       - name: 👀 Checkout Code
         uses: actions/checkout@v4
@@ -46,16 +50,14 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: 🛠 Setup Cargo build helper packages
-        working-directory: ./g3-http-proxy
-        run: |
-          sudo apt-get update
-          sudo apt-get install capnproto libc-ares-dev libssl-dev musl-tools pkg-config
+        run: apk add --no-cache c-ares-dev cmake capnproto-dev musl-dev openssl-dev
 
       - name: 🛠 Run Build
         working-directory: ./g3-http-proxy
         run: just build ${{ inputs.g3-version || '' }}
         env:
-          RUSTFLAGS: "-Ctarget-feature=-crt-static"
+          RUSTFLAGS: "-C target-feature=-crt-static"
+          CARGO_BUILD_TARGET: x86_64-unknown-linux-musl
 
       - name: 🙅 Notify end
         if: github.event_name != 'workflow_dispatch'

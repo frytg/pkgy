@@ -1,5 +1,6 @@
 set export := true
 g3_version := "1.10.4"
+build_target := "${CARGO_BUILD_TARGET:-aarch64-apple-darwin}"
 
 # run `just` in the CLI to see the list of shortcuts
 _default:
@@ -31,10 +32,10 @@ build version=g3_version:
 	@git clone --depth 1 --branch g3proxy-v{{version}} --quiet https://github.com/bytedance/g3.git
 	@echo ""
 
-	@echo "Build with Rust..."
-	rustup target add x86_64-unknown-linux-musl
-	cargo build \
-		--target x86_64-unknown-linux-musl \
+	@echo "Build with Rust for {{build_target}}..."
+	@rustup target add {{build_target}}
+	@cargo build \
+		--target {{build_target}} \
 		--profile release-lto \
 		--no-default-features \
 		--features quic,c-ares \
