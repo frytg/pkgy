@@ -52,6 +52,12 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           just build ${{ inputs.g3-version || '' }}
+        env:
+          RUSTFLAGS: "-Ctarget-feature=-crt-static"
+
+      - name: Notify end
+        if: github.event_name != 'workflow_dispatch'
+        run: echo "Not pushing image to registry" >> $GITHUB_STEP_SUMMARY
 
       - name: 🔑 Login to Registry
         if: github.event_name == 'workflow_dispatch'

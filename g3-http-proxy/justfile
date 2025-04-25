@@ -20,6 +20,7 @@ build version=g3_version:
 	-rm -rf g3
 	git clone --depth 1 --branch g3proxy-v{{version}} --quiet https://github.com/bytedance/g3.git
 	cargo build --profile release-lto --no-default-features --features quic,c-ares,hickory -p g3proxy -p g3proxy-ctl --manifest-path g3/Cargo.toml
+	ls -al ./g3/target/release-lto/
 	./g3/target/release-lto/g3proxy --version
 	docker build -t g3proxy .
 	-echo "Image size: $(docker images g3proxy --format json | jq -r .Size)"
