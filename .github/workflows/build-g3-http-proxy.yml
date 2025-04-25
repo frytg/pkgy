@@ -35,10 +35,6 @@ jobs:
     outputs:
       VERSION: ${{ steps.tag.outputs.VERSION }}
     timeout-minutes: 20
-    container:
-      image: rust:alpine
-      volumes:
-        - /usr/local/cargo/registry:/usr/local/cargo/registry
     steps:
       - name: 👀 Checkout Code
         uses: actions/checkout@v4
@@ -49,7 +45,9 @@ jobs:
 
       - name: 🛠 Setup build helper packages
         run: |
-          apk add --no-cache c-ares-dev cmake capnproto-dev docker git just musl-dev openssl-dev
+          sudo apt-get update
+          sudo apt-get install capnproto just libc-ares-dev libssl-dev musl-tools pkg-config
+          # apk add --no-cache c-ares-dev cmake capnproto-dev docker git just musl-dev openssl-dev
           cargo install cross --git https://github.com/cross-rs/cross
 
       - name: 🛠 Run Build
