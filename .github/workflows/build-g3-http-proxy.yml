@@ -62,7 +62,7 @@ jobs:
       - name: 🏷 Tag & Push docker
         run: |
           docker tag g3proxy:latest $GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
-          # docker push $GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }} --quiet
+          docker push $GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }} --quiet
 
           echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
