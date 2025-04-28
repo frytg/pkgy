@@ -2,6 +2,8 @@
 
 This wraps the `curl` project from [`curl/curl`](https://github.com/curl/curl) and provides a standalone docker container image.
 
+[![Containerize curl](https://github.com/frytg/pkgy/actions/workflows/build-curl.yml/badge.svg?branch=main)](https://github.com/frytg/pkgy/actions/workflows/build-curl.yml)
+
 ## Build
 
 The [justfile](justfile) contains the build process (`just build`).
@@ -40,5 +42,5 @@ spec:
 
 ## Links:
 
-- curl repository: [`curl/curl`](https://github.com/curl/curl)
-- curl alpine package: [`curl`](https://pkgs.alpinelinux.org/package/edge/main/x86_64/curl)
+- GitHub repository: [`curl/curl`](https://github.com/curl/curl)
+- Alpine package: [`curl`](https://pkgs.alpinelinux.org/package/edge/main/x86_64/curl)

@@ -1,0 +1,16 @@
+set export := true
+
+# set default versions
+alpine_version := "3.21"
+
+# run `just` in the CLI to see the list of shortcuts
+_default:
+	just --list
+
+# build docker image using a given version
+build:
+	@docker build \
+		-t kubectl:latest \
+		--platform "linux/amd64" \
+		--build-arg ALPINE_VERSION={{alpine_version}} .
+	-@echo "Image size: $(docker images kubectl:latest --format json | jq -r .Size)"

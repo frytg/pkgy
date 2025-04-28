@@ -1,0 +1,82 @@
+name: Containerize kubectl
+
+on:
+   push:
+      branches:
+         - main
+         - dev/*
+         - chore/*
+         - feature/*
+      paths:
+         - kubectl/**
+         - .github/workflows/build-kubectl.yml
+   workflow_dispatch:
+
+concurrency:
+   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+   cancel-in-progress: true
+
+env:
+   GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/kubectl
+
+permissions:
+   id-token: write
+   contents: read
+   packages: write
+
+jobs:
+   build:
+      runs-on: ubuntu-latest
+      outputs:
+         VERSION: ${{ steps.tag.outputs.VERSION }}
+      timeout-minutes: 20
+      container:
+         image: alpine:3.21
+      steps:
+         - name: 👀 Checkout Code
+           uses: actions/checkout@v4
+           with:
+              persist-credentials: false
+              show-progress: false
+              submodules: false
+
+         - name: 🛠 Setup build helper packages
+           run: apk add --no-cache docker git just jq
+
+         - name: 🛠 Run Build
+           working-directory: ./kubectl
+           run: just build
+
+         - name: 🙅 Notify end
+           if: github.event_name != 'workflow_dispatch'
+           run: echo "Not pushing image to registry" >> $GITHUB_STEP_SUMMARY
+
+         - name: 🔑 Login to Registry
+           if: github.event_name == 'workflow_dispatch'
+           run: echo ${{ github.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+         - name: 🏷 Create tag
+           id: tag
+           if: github.event_name == 'workflow_dispatch'
+           run: |
+              # Add custom wrapper syntax
+              VERSION=day$(date +%Y-%m-%d)--build${{ github.run_number }}
+
+              # Update var
+              echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+         - name: 🚀 Tag & Push docker
+           if: github.event_name == 'workflow_dispatch'
+           run: |
+              REMOTE_IMAGE=$GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
+              docker tag kubectl:latest $REMOTE_IMAGE
+              docker push $REMOTE_IMAGE --quiet
+
+              echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+         - name: 👋 Logout
+           if: github.event_name == 'workflow_dispatch'
+           run: docker logout
