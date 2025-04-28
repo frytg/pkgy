@@ -18,6 +18,15 @@ See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy
 - [`g3-http-proxy`](./g3-http-proxy/) - standalone container image with http forward proxy
 - [`kubectl`](./kubectl/) - kubectl alpine image
 
+## Signed Containers
+
+Some containers are signed using Sigstore Cosign. The GitHub Actions runs will print commands how to verify the containers yourself.
+
+More also here:
+
+- [Sigstore: How it works](https://www.sigstore.dev/how-it-works)
+- [Sigstore Docs](https://docs.sigstore.dev)
+
 # License
 
 The files in this project are licensed using [The Unlicense](https://unlicense.org/).

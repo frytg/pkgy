@@ -66,8 +66,8 @@ jobs:
               echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
          - name: 🚀 Tag & Push docker
-           if: github.event_name == 'workflow_dispatch'
            id: push-docker
+           if: github.event_name == 'workflow_dispatch'
            run: |
               REMOTE_IMAGE=$GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
               docker tag curl:latest $REMOTE_IMAGE
@@ -102,7 +102,7 @@ jobs:
               echo "$VERIFIED" | jq >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-              echo "## Verify this docker image by running the following command:" >> $GITHUB_STEP_SUMMARY
+              echo "## Verify yourself using Cosign" >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
               echo "cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
               	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
