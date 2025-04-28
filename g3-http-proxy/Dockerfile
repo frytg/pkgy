@@ -5,7 +5,7 @@ ARG ALPINE_VERSION
 FROM alpine:${ALPINE_VERSION}
 
 # label container
-LABEL org.opencontainers.image.source="https://github.com/frytg/pkgy/g3-http-proxy"
+LABEL org.opencontainers.image.source="https://github.com/frytg/pkgy"
 LABEL org.opencontainers.image.description="HTTP forward proxy"
 
 # install some required packages

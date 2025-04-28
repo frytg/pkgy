@@ -8,12 +8,13 @@ The reason for this repository is to provide a collection of recipes and self-/p
 
 They were primarily created for my personal and professional use, but can be used by anyone who has similar needs.
 
-Either run the build scripts yourself or use the packages from GitHub registry. They are all built using GitHub Actions (see [*Working with the Container registry*](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
+Either run the build scripts yourself or use the packages from GitHub registry. They are all built using GitHub Actions (see [_Working with the Container registry_](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
 
 ## Packages
 
 See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy](https://github.com/users/frytg/packages?repo_name=pkgy)
 
+- [`curl`](./curl/): curl alpine image
 - [`g3-http-proxy`](./g3-http-proxy/): standalone container image with http forward proxy
 
 # License
