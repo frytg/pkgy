@@ -9,7 +9,7 @@ server:
     type: http_proxy
     escaper: direct
     listen:
-      address: "[::]:3128"
+      address: "0.0.0.0:3128"
 
 # c-ares docs: https://g3-project.readthedocs.io/projects/g3proxy/en/latest/configuration/resolvers/c_ares.html
 # default dns servers: https://www.dns0.eu
@@ -19,8 +19,6 @@ resolver:
     server:
       - "193.110.81.0"
       - "185.253.5.0"
-      - "2a0f:fc80::"
-      - "2a0f:fc81::"
 
 # direct_fixed docs: https://g3-project.readthedocs.io/projects/g3proxy/en/latest/configuration/escapers/direct_fixed.html
 escaper:
