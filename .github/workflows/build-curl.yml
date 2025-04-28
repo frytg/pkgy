@@ -1,4 +1,4 @@
-name: Containerize G3 HTTP Proxy
+name: Containerize curl
 
 on:
    push:
@@ -8,21 +8,16 @@ on:
          - chore/*
          - feature/*
       paths:
-         - g3-http-proxy/**
-         - .github/workflows/build-g3-http-proxy.yml
+         - curl/**
+         - .github/workflows/build-curl.yml
    workflow_dispatch:
-      inputs:
-         g3-version:
-            required: true
-            description: GitHub tagged version
 
 concurrency:
    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
    cancel-in-progress: true
 
 env:
-   GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/g3-http-proxy
-   CARGO_BUILD_TARGET: x86_64-unknown-linux-musl
+   GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/curl
 
 permissions:
    id-token: write
@@ -36,9 +31,7 @@ jobs:
          VERSION: ${{ steps.tag.outputs.VERSION }}
       timeout-minutes: 20
       container:
-         image: rust:alpine
-         volumes:
-            - /usr/local/cargo/registry:/usr/local/cargo/registry
+         image: alpine:3.21
       steps:
          - name: 👀 Checkout Code
            uses: actions/checkout@v4
@@ -48,13 +41,11 @@ jobs:
               submodules: false
 
          - name: 🛠 Setup build helper packages
-           run: apk add --no-cache c-ares-dev cmake capnproto-dev docker git just jq musl-dev openssl-dev
+           run: apk add --no-cache docker git just jq
 
          - name: 🛠 Run Build
-           working-directory: ./g3-http-proxy
-           run: just build ${{ inputs.g3-version || '' }}
-           env:
-              RUSTFLAGS: "-C target-feature=-crt-static"
+           working-directory: ./curl
+           run: just build
 
          - name: 🙅 Notify end
            if: github.event_name != 'workflow_dispatch'
@@ -69,28 +60,16 @@ jobs:
            if: github.event_name == 'workflow_dispatch'
            run: |
               # Add custom wrapper syntax
-              VERSION=v${{ inputs.g3-version }}--day$(date +%Y-%m-%d)--build${{ github.run_number }}
+              VERSION=day$(date +%Y-%m-%d)--build${{ github.run_number }}
 
               # Update var
               echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-         - name: 🚀 Tag & Push docker (IPv4-only)
+         - name: 🚀 Tag & Push docker
            if: github.event_name == 'workflow_dispatch'
            run: |
-              REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv4-only--${{ steps.tag.outputs.VERSION }}
+              REMOTE_IMAGE=$GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
               docker tag g3proxy:ipv4-only $REMOTE_IMAGE
-              docker push $REMOTE_IMAGE --quiet
-
-              echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-              echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-
-         - name: 🚀 Tag & Push docker (IPv6-first)
-           if: github.event_name == 'workflow_dispatch'
-           run: |
-              REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv6-first--${{ steps.tag.outputs.VERSION }}
-              docker tag g3proxy:ipv6-first $REMOTE_IMAGE
               docker push $REMOTE_IMAGE --quiet
 
               echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
