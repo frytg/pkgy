@@ -3,6 +3,7 @@
 ## 2025-04-28
 
 - feat: add IPv4-only and IPv6-first configuration
+
 ## 2025-04-25
 
 - fix: make docker deployment work properly
