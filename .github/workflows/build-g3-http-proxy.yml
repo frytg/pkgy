@@ -78,7 +78,7 @@ jobs:
       - name: 🚀 Tag & Push docker (IPv4-only)
         if: github.event_name == 'workflow_dispatch'
         run: |
-          REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv4-only-${{ steps.tag.outputs.VERSION }}
+          REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv4-only--${{ steps.tag.outputs.VERSION }}
           docker tag g3proxy:ipv4-only $REMOTE_IMAGE
           docker push $REMOTE_IMAGE --quiet
 
@@ -90,7 +90,7 @@ jobs:
       - name: 🚀 Tag & Push docker (IPv6-first)
         if: github.event_name == 'workflow_dispatch'
         run: |
-          REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv6-first-${{ steps.tag.outputs.VERSION }}
+          REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv6-first--${{ steps.tag.outputs.VERSION }}
           docker tag g3proxy:ipv6-first $REMOTE_IMAGE
           docker push $REMOTE_IMAGE --quiet
 
