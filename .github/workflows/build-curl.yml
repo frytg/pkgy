@@ -87,7 +87,7 @@ jobs:
            env:
               COSIGN_YES: "true"
            run: |
-              cosign sign $REMOTE_IMAGE@${{ steps.push-docker.outputs.DIGEST }}
+              cosign sign $GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}@${{ steps.push-docker.outputs.DIGEST }}
 
          - name: 👋 Logout
            if: github.event_name == 'workflow_dispatch'
