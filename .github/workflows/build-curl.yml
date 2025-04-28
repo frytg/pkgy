@@ -83,18 +83,31 @@ jobs:
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
          - name: 🔑  Sign Image with Cosign
+           id: cosign-sign
            if: github.event_name == 'workflow_dispatch'
            env:
               COSIGN_YES: "true"
-           run: |
-              cosign sign ${{ steps.push-docker.outputs.DIGEST }}
+           run: cosign sign ${{ steps.push-docker.outputs.DIGEST }}
 
          - name: 🔐 Verify Image with Cosign
+           id: cosign-verify
            if: github.event_name == 'workflow_dispatch'
            run: |
-              cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
+              VERIFIED=$(cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
               	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
-               --certificate-identity=https://github.com/${{ github.workflow_ref }}
+               --certificate-identity=https://github.com/${{ github.workflow_ref }})
+
+              echo "## Signed and Verified image using Cosign" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+              echo "$VERIFIED" | jq >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+              echo "## Verify this docker image by running the following command:" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+              echo "cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
+              	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+               --certificate-identity=https://github.com/${{ github.workflow_ref }}" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
          - name: 👋 Logout
            if: github.event_name == 'workflow_dispatch'
