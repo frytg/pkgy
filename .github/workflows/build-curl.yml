@@ -69,7 +69,7 @@ jobs:
            if: github.event_name == 'workflow_dispatch'
            run: |
               REMOTE_IMAGE=$GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
-              docker tag g3proxy:ipv4-only $REMOTE_IMAGE
+              docker tag curl:latest $REMOTE_IMAGE
               docker push $REMOTE_IMAGE --quiet
 
               echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
