@@ -14,8 +14,9 @@ Either run the build scripts yourself or use the packages from GitHub registry. 
 
 See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy](https://github.com/users/frytg/packages?repo_name=pkgy)
 
-- [`curl`](./curl/): curl alpine image
-- [`g3-http-proxy`](./g3-http-proxy/): standalone container image with http forward proxy
+- [`curl`](./curl/) - curl alpine image
+- [`g3-http-proxy`](./g3-http-proxy/) - standalone container image with http forward proxy
+- [`kubectl`](./kubectl/) - kubectl alpine image
 
 # License
 

@@ -41,7 +41,7 @@ jobs:
               submodules: false
 
          - name: 🛠 Setup build helper packages
-           run: apk add --no-cache docker git just jq
+           run: apk add --no-cache cosign docker git just jq
 
          - name: 🛠 Run Build
            working-directory: ./curl
@@ -67,15 +67,27 @@ jobs:
 
          - name: 🚀 Tag & Push docker
            if: github.event_name == 'workflow_dispatch'
+           id: push-docker
            run: |
               REMOTE_IMAGE=$GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
               docker tag curl:latest $REMOTE_IMAGE
               docker push $REMOTE_IMAGE --quiet
 
+              # add digest to output
+              DIGEST=$(docker images --digests $REMOTE_IMAGE | awk 'NR==2 {print $2}')
+              echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
+
               echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
               echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+         - name: Sign Image
+           if: github.event_name == 'workflow_dispatch'
+           env:
+              COSIGN_YES: "true"
+           run: |
+              cosign sign $REMOTE_IMAGE@${{ steps.push-docker.outputs.DIGEST }}
 
          - name: 👋 Logout
            if: github.event_name == 'workflow_dispatch'
