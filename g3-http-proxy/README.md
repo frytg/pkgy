@@ -2,6 +2,8 @@
 
 This builds the `g3proxy` project from [`bytedance/g3`](https://github.com/bytedance/g3) and provides a standalone docker container image to be used as forward proxy.
 
+[![Containerize G3 HTTP Proxy](https://github.com/frytg/pkgy/actions/workflows/build-g3-http-proxy.yml/badge.svg?branch=main)](https://github.com/frytg/pkgy/actions/workflows/build-g3-http-proxy.yml)
+
 ## Setup
 
 Setup your local environment by running `just setup`.
