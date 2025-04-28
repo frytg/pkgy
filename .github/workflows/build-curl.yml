@@ -82,12 +82,19 @@ jobs:
               echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-         - name: Sign Image
+         - name: 🔑  Sign Image with Cosign
            if: github.event_name == 'workflow_dispatch'
            env:
               COSIGN_YES: "true"
            run: |
               cosign sign ${{ steps.push-docker.outputs.DIGEST }}
+
+         - name: 🔐 Verify Image with Cosign
+           if: github.event_name == 'workflow_dispatch'
+           run: |
+              cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
+              	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+               --certificate-identity=https://github.com/${{ github.workflow_ref }}
 
          - name: 👋 Logout
            if: github.event_name == 'workflow_dispatch'
