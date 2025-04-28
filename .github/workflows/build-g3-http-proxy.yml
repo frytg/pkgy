@@ -76,15 +76,28 @@ jobs:
           # Update var
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: 🚀 Tag & Push docker
+      - name: 🚀 Tag & Push docker (IPv4-only)
         if: github.event_name == 'workflow_dispatch'
         run: |
-          docker tag g3proxy:latest $GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
-          docker push $GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }} --quiet
+          REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv4-only-${{ steps.tag.outputs.VERSION }}
+          docker tag g3proxy:ipv4-only $REMOTE_IMAGE
+          docker push $REMOTE_IMAGE --quiet
 
           echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "$GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🚀 Tag & Push docker (IPv6-first)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv6-first-${{ steps.tag.outputs.VERSION }}
+          docker tag g3proxy:ipv6-first $REMOTE_IMAGE
+          docker push $REMOTE_IMAGE --quiet
+
+          echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
       - name: 👋 Logout
