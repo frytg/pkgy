@@ -1,4 +1,7 @@
 set export := true
+
+# set default versions
+alpine_version := "3.21"
 default_g3_version := "1.10.4"
 build_target := "${CARGO_BUILD_TARGET:-aarch64-apple-darwin}"
 
@@ -46,8 +49,19 @@ build version=default_g3_version: verify
 	-@rm -rf g3
 	@./g3proxy --version
 
-	@docker build -t g3proxy --platform "linux/amd64" .
-	-@echo "Image size: $(docker images g3proxy --format json | jq -r .Size)"
+	@docker build \
+		-t g3proxy:ipv4-only \
+		--platform "linux/amd64" \
+		--build-arg ALPINE_VERSION={{alpine_version}} \
+		--build-arg PROXY_CONFIG_FILE=g3proxy.ipv4-only.yml .
+	-@echo "Image size IPv4: $(docker images g3proxy:ipv4-only --format json | jq -r .Size)"
+
+	@docker build \
+		-t g3proxy:ipv6-first \
+		--platform "linux/amd64" \
+		--build-arg ALPINE_VERSION={{alpine_version}} \
+		--build-arg PROXY_CONFIG_FILE=g3proxy.ipv6-first.yml .
+	-@echo "Image size IPv6: $(docker images g3proxy:ipv6-first --format json | jq -r .Size)"
 
 # list rustup targets
 targets:
