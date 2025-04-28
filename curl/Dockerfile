@@ -5,7 +5,7 @@ ARG ALPINE_VERSION
 FROM alpine:${ALPINE_VERSION}
 
 # label container
-LABEL org.opencontainers.image.source="https://github.com/frytg/pkgy/curl"
+LABEL org.opencontainers.image.source="https://github.com/frytg/pkgy"
 LABEL org.opencontainers.image.description="Curl alpine image"
 
 # install some required packages
