@@ -41,7 +41,7 @@ jobs:
               submodules: false
 
          - name: 🛠 Setup build helper packages
-           run: apk add --no-cache cosign docker git just jq
+           run: apk add --no-cache cosign crane docker git just jq
 
          - name: 🛠 Run Build
            working-directory: ./curl
@@ -73,14 +73,15 @@ jobs:
               docker tag curl:latest $REMOTE_IMAGE
               docker push $REMOTE_IMAGE --quiet
 
-              # add digest to output
-              DIGEST=$(docker inspect $REMOTE_IMAGE | jq -r ".[0].RepoDigests[0]")
-              echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
-
               echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
               echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+              # add digest to output
+              DIGEST=$(crane digest $REMOTE_IMAGE)
+              echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
+              echo "Remote digest: $DIGEST" >> $GITHUB_STEP_SUMMARY
 
          - name: 🔑  Sign Image with Cosign
            id: cosign-sign
@@ -93,7 +94,7 @@ jobs:
            id: cosign-verify
            if: github.event_name == 'workflow_dispatch'
            run: |
-              VERIFIED=$(cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
+              VERIFIED=$(cosign verify ${{ env.GH_REGISTRY_PATH }}@${{ steps.push-docker.outputs.DIGEST }} \
               	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
                --certificate-identity=https://github.com/${{ github.workflow_ref }})
 
@@ -104,10 +105,18 @@ jobs:
 
               echo "## Verify yourself using Cosign" >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-              echo "cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
+              echo "cosign verify ${{ env.GH_REGISTRY_PATH }}@${{ steps.push-docker.outputs.DIGEST }} \
               	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
                --certificate-identity=https://github.com/${{ github.workflow_ref }}" >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+         - name: Attest
+           uses: actions/attest-build-provenance@v2
+           id: attest
+           with:
+              subject-name: ${{ env.GH_REGISTRY_PATH }}
+              subject-digest: ${{ steps.push-docker.outputs.DIGEST }}
+              push-to-registry: true
 
          - name: 👋 Logout
            if: github.event_name == 'workflow_dispatch'
