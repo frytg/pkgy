@@ -83,7 +83,7 @@ jobs:
         id: digest
         if: github.event_name == 'workflow_dispatch'
         run: |
-          DIGEST=$(crane digest $REMOTE_IMAGE)
+          DIGEST=$(crane digest ${{ steps.push-docker.outputs.REMOTE_IMAGE }})
           echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
           echo "Remote digest: $DIGEST" >> $GITHUB_STEP_SUMMARY
 
