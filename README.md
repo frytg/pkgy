@@ -27,7 +27,8 @@ More also here:
 - [Sigstore: How it works](https://www.sigstore.dev/how-it-works)
 - [Sigstore Docs](https://docs.sigstore.dev)
 
-# License
+## License
 
-The files in this project are licensed using [The Unlicense](https://unlicense.org/).
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
 This applies to these files only, not the packages or tools used in the recipes, which are licensed under their respective licenses.
