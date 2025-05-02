@@ -32,7 +32,7 @@ jobs:
       VERSION: ${{ steps.tag.outputs.VERSION }}
     timeout-minutes: 20
     container:
-      image: alpine:${{ env.ALPINE_VERSION }}
+      image: alpine:$ALPINE_VERSION
     steps:
       - name: 👀 Checkout Code
         uses: actions/checkout@v4
