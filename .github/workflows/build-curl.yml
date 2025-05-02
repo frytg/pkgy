@@ -57,9 +57,17 @@ jobs:
 
       - name: 🏷 Create tag
         id: tag
-        if: github.event_name == 'workflow_dispatch'
         run: |
-          VERSION=day$(date +%Y-%m-%d)--build${{ github.run_number }}
+          # Strip git ref prefix from version
+          BRANCH=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && BRANCH=$(echo $BRANCH | sed -e 's/^v//')
+
+          # Add custom wrapper syntax
+          VERSION=day$(date +%Y-%m-%d)--build${{ github.run_number }}--$BRANCH
+
+          echo "Created tag: \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: 🚀 Tag & Push container
