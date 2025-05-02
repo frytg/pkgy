@@ -12,7 +12,9 @@ The [justfile](justfile) contains the build process (`just build`).
 
 Build the project yourself or navigate to the GitHub registry page and pull the latest image. From there it can be used like any other container image.
 
-### Use for Cronjobs
+[See all recent versions here.](https://github.com/frytg/pkgy/pkgs/container/pkgy%2Fkubectl/versions)
+
+### Example: Use for Cronjobs
 
 You can use this image for cronjobs in Kubernetes:
 
@@ -22,29 +24,28 @@ You can use this image for cronjobs in Kubernetes:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-   name: my-cronjob
-   namespace: some-name
+  name: my-cronjob
+  namespace: some-name
 spec:
-   schedule: "17 3 * * *"
-   concurrencyPolicy: Replace
-   successfulJobsHistoryLimit: 10
-   failedJobsHistoryLimit: 10
-   jobTemplate:
-      spec:
-         template:
-            spec:
-               serviceAccountName: some-sa
-               restartPolicy: OnFailure
-               containers:
-                  - name: cronjobs
-                    image: ghcr.io/frytg/pkgy/kubectl:version-number
-                    command:
-                       ["/bin/sh", "-c", "kubectl rollout restart deployment/my-deployment -n my-namespace"]
+  schedule: '17 3 * * *'
+  concurrencyPolicy: Replace
+  successfulJobsHistoryLimit: 10
+  failedJobsHistoryLimit: 10
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: some-sa
+          restartPolicy: OnFailure
+          containers:
+            - name: cronjobs
+              image: ghcr.io/frytg/pkgy/kubectl:version-number
+              command: ['/bin/sh', '-c', 'kubectl rollout restart deployment/my-deployment -n my-namespace']
 ```
 
 (replace `version-number` with the latest version)
 
-## Links:
+## Links
 
 - CLI docs: [kubernetes.io/docs/reference/kubectl](https://kubernetes.io/docs/reference/kubectl/)
 - Alpine package: [`kubectl`](https://pkgs.alpinelinux.org/package/edge/community/x86_64/kubectl)

@@ -1,103 +1,103 @@
 name: Containerize G3 HTTP Proxy
 
 on:
-   push:
-      branches:
-         - main
-         - dev/*
-         - chore/*
-         - feature/*
-      paths:
-         - g3-http-proxy/**
-         - .github/workflows/build-g3-http-proxy.yml
-   workflow_dispatch:
-      inputs:
-         g3-version:
-            required: true
-            description: GitHub tagged version
+  push:
+    branches:
+      - main
+      - dev/*
+      - chore/*
+      - feature/*
+    paths:
+      - g3-http-proxy/**
+      - .github/workflows/build-g3-http-proxy.yml
+  workflow_dispatch:
+    inputs:
+      g3-version:
+        required: true
+        description: GitHub tagged version
 
 concurrency:
-   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
-   GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/g3-http-proxy
-   CARGO_BUILD_TARGET: x86_64-unknown-linux-musl
+  GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/g3-http-proxy
+  CARGO_BUILD_TARGET: x86_64-unknown-linux-musl
 
 permissions:
-   id-token: write
-   contents: read
-   packages: write
+  id-token: write
+  contents: read
+  packages: write
 
 jobs:
-   build:
-      runs-on: ubuntu-latest
-      outputs:
-         VERSION: ${{ steps.tag.outputs.VERSION }}
-      timeout-minutes: 20
-      container:
-         image: rust:alpine
-         volumes:
-            - /usr/local/cargo/registry:/usr/local/cargo/registry
-      steps:
-         - name: 👀 Checkout Code
-           uses: actions/checkout@v4
-           with:
-              persist-credentials: false
-              show-progress: false
-              submodules: false
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.tag.outputs.VERSION }}
+    timeout-minutes: 20
+    container:
+      image: rust:alpine
+      volumes:
+        - /usr/local/cargo/registry:/usr/local/cargo/registry
+    steps:
+      - name: 👀 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          show-progress: false
+          submodules: false
 
-         - name: 🛠 Setup build helper packages
-           run: apk add --no-cache c-ares-dev cmake capnproto-dev docker git just jq musl-dev openssl-dev
+      - name: 🛠 Setup build helper packages
+        run: apk add --no-cache c-ares-dev cmake capnproto-dev docker git just jq musl-dev openssl-dev
 
-         - name: 🛠 Run Build
-           working-directory: ./g3-http-proxy
-           run: just build ${{ inputs.g3-version || '' }}
-           env:
-              RUSTFLAGS: "-C target-feature=-crt-static"
+      - name: 🛠 Run Build
+        working-directory: ./g3-http-proxy
+        run: just build ${{ inputs.g3-version || '' }}
+        env:
+          RUSTFLAGS: "-C target-feature=-crt-static"
 
-         - name: 🙅 Notify end
-           if: github.event_name != 'workflow_dispatch'
-           run: echo "Not pushing image to registry" >> $GITHUB_STEP_SUMMARY
+      - name: 🙅 Notify end
+        if: github.event_name != 'workflow_dispatch'
+        run: echo "Not pushing image to registry" >> $GITHUB_STEP_SUMMARY
 
-         - name: 🔑 Login to Registry
-           if: github.event_name == 'workflow_dispatch'
-           run: echo ${{ github.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: 🔑 Login to Registry
+        if: github.event_name == 'workflow_dispatch'
+        run: echo ${{ github.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-         - name: 🏷 Create tag
-           id: tag
-           if: github.event_name == 'workflow_dispatch'
-           run: |
-              # Add custom wrapper syntax
-              VERSION=v${{ inputs.g3-version }}--day$(date +%Y-%m-%d)--build${{ github.run_number }}
+      - name: 🏷 Create tag
+        id: tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          # Add custom wrapper syntax
+          VERSION=v${{ inputs.g3-version }}--day$(date +%Y-%m-%d)--build${{ github.run_number }}
 
-              # Update var
-              echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          # Update var
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-         - name: 🚀 Tag & Push docker (IPv4-only)
-           if: github.event_name == 'workflow_dispatch'
-           run: |
-              REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv4-only--${{ steps.tag.outputs.VERSION }}
-              docker tag g3proxy:ipv4-only $REMOTE_IMAGE
-              docker push $REMOTE_IMAGE --quiet
+      - name: 🚀 Tag & Push docker (IPv4-only)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv4-only--${{ steps.tag.outputs.VERSION }}
+          docker tag g3proxy:ipv4-only $REMOTE_IMAGE
+          docker push $REMOTE_IMAGE --quiet
 
-              echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-              echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-         - name: 🚀 Tag & Push docker (IPv6-first)
-           if: github.event_name == 'workflow_dispatch'
-           run: |
-              REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv6-first--${{ steps.tag.outputs.VERSION }}
-              docker tag g3proxy:ipv6-first $REMOTE_IMAGE
-              docker push $REMOTE_IMAGE --quiet
+      - name: 🚀 Tag & Push docker (IPv6-first)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          REMOTE_IMAGE=$GH_REGISTRY_PATH:ipv6-first--${{ steps.tag.outputs.VERSION }}
+          docker tag g3proxy:ipv6-first $REMOTE_IMAGE
+          docker push $REMOTE_IMAGE --quiet
 
-              echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-              echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-         - name: 👋 Logout
-           if: github.event_name == 'workflow_dispatch'
-           run: docker logout
+      - name: 👋 Logout
+        if: github.event_name == 'workflow_dispatch'
+        run: docker logout

@@ -14,10 +14,21 @@ Either run the build scripts yourself or use the packages from GitHub registry. 
 
 See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy](https://github.com/users/frytg/packages?repo_name=pkgy)
 
-- [`curl`](./curl/): curl alpine image
-- [`g3-http-proxy`](./g3-http-proxy/): standalone container image with http forward proxy
+- [`curl`](./curl/) - curl alpine image
+- [`g3-http-proxy`](./g3-http-proxy/) - standalone container image with http forward proxy
+- [`kubectl`](./kubectl/) - kubectl alpine image
 
-# License
+## Signed Containers
 
-The files in this project are licensed using [The Unlicense](https://unlicense.org/).
+Some containers are signed using Sigstore Cosign. The GitHub Actions runs will print commands how to verify the containers yourself.
+
+More also here:
+
+- [Sigstore: How it works](https://www.sigstore.dev/how-it-works)
+- [Sigstore Docs](https://docs.sigstore.dev)
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
 This applies to these files only, not the packages or tools used in the recipes, which are licensed under their respective licenses.
