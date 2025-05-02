@@ -12,7 +12,9 @@ The [justfile](justfile) contains the build process (`just build`).
 
 Build the project yourself or navigate to the GitHub registry page and pull the latest image. From there it can be used like any other container image.
 
-### Use for Cronjobs
+[See all recent versions here.](https://github.com/frytg/pkgy/pkgs/container/pkgy%2Fkubectl/versions)
+
+### Example: Use for Cronjobs
 
 You can use this image for cronjobs in Kubernetes:
 

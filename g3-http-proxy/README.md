@@ -18,6 +18,8 @@ The [justfile](justfile) contains the build instructions, `cargo build` runs bef
 
 Build the project yourself or navigate to the GitHub registry page and pull the latest image. From there it can be used like any other container image. The proxy is exposed on port `3128`.
 
+[See all recent versions here.](https://github.com/frytg/pkgy/pkgs/container/pkgy%2Fg3-http-proxy/versions)
+
 ## Test
 
 After running the proxy, you can test it using the following command:

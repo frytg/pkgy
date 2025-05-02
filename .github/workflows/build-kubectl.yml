@@ -41,7 +41,7 @@ jobs:
           submodules: false
 
       - name: 🛠 Setup build helper packages
-        run: apk add --no-cache cosign docker git just jq
+        run: apk add --no-cache cosign crane docker git just jq
 
       - name: 🛠 Run Build
         working-directory: ./kubectl
