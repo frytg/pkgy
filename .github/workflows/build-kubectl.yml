@@ -69,6 +69,7 @@ jobs:
           REMOTE_IMAGE=$GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
           docker tag kubectl:latest $REMOTE_IMAGE
           docker push $REMOTE_IMAGE --quiet
+          echo "REMOTE_IMAGE=$REMOTE_IMAGE" >> $GITHUB_OUTPUT
 
           # add digest to output
           DIGEST=$(docker inspect $REMOTE_IMAGE | jq -r ".[0].RepoDigests[0]")
