@@ -79,10 +79,6 @@ jobs:
           docker push $REMOTE_IMAGE --quiet
           echo "REMOTE_IMAGE=$REMOTE_IMAGE" >> $GITHUB_OUTPUT
 
-          # add digest to output
-          DIGEST=$(docker inspect $REMOTE_IMAGE | jq -r ".[0].RepoDigests[0]")
-          echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
-
           echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
