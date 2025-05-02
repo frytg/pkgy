@@ -17,6 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  ALPINE_VERSION: 3.21
   GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/kubectl
 
 permissions:
@@ -31,7 +32,7 @@ jobs:
       VERSION: ${{ steps.tag.outputs.VERSION }}
     timeout-minutes: 20
     container:
-      image: alpine:3.21
+      image: alpine:${{ env.ALPINE_VERSION }}
     steps:
       - name: 👀 Checkout Code
         uses: actions/checkout@v4
@@ -59,10 +60,7 @@ jobs:
         id: tag
         if: github.event_name == 'workflow_dispatch'
         run: |
-          # Add custom wrapper syntax
           VERSION=day$(date +%Y-%m-%d)--build${{ github.run_number }}
-
-          # Update var
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: 🚀 Tag & Push docker
@@ -82,18 +80,25 @@ jobs:
           echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
+      - name: 📖 Get digest from container
+        id: digest
+        run: |
+          DIGEST=$(crane digest $REMOTE_IMAGE)
+          echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
+          echo "Remote digest: $DIGEST" >> $GITHUB_STEP_SUMMARY
+
       - name: 🔑  Sign Image with Cosign
         id: cosign-sign
         if: github.event_name == 'workflow_dispatch'
         env:
           COSIGN_YES: "true"
-        run: cosign sign ${{ steps.push-docker.outputs.DIGEST }}
+        run: cosign sign ${{ env.GH_REGISTRY_PATH }}@${{ steps.digest.outputs.DIGEST }}
 
       - name: 🔐 Verify Image with Cosign
         id: cosign-verify
         if: github.event_name == 'workflow_dispatch'
         run: |
-          VERIFIED=$(cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
+          VERIFIED=$(cosign verify ${{ env.GH_REGISTRY_PATH }}@${{ steps.digest.outputs.DIGEST }} \
           	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
            --certificate-identity=https://github.com/${{ github.workflow_ref }})
 
@@ -104,7 +109,7 @@ jobs:
 
           echo "## Verify yourself using Cosign" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
+          echo "cosign verify ${{ env.GH_REGISTRY_PATH }}@${{ steps.digest.outputs.DIGEST }} \
           	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
            --certificate-identity=https://github.com/${{ github.workflow_ref }}" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

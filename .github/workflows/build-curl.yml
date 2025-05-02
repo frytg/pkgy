@@ -17,10 +17,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  ALPINE_VERSION: 3.21
   GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/curl
 
 permissions:
-  attestations: write
   id-token: write
   contents: read
   packages: write
@@ -32,7 +32,7 @@ jobs:
       VERSION: ${{ steps.tag.outputs.VERSION }}
     timeout-minutes: 20
     container:
-      image: alpine:3.21
+      image: alpine:${{ env.ALPINE_VERSION }}
     steps:
       - name: 👀 Checkout Code
         uses: actions/checkout@v4
@@ -60,10 +60,7 @@ jobs:
         id: tag
         if: github.event_name == 'workflow_dispatch'
         run: |
-          # Add custom wrapper syntax
           VERSION=day$(date +%Y-%m-%d)--build${{ github.run_number }}
-
-          # Update var
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: 🚀 Tag & Push container
@@ -112,15 +109,6 @@ jobs:
           	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
            --certificate-identity=https://github.com/${{ github.workflow_ref }}" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Attest
-        uses: actions/attest-build-provenance@v2
-        if: github.event_name == 'workflow_dispatch'
-        id: attest
-        with:
-          subject-name: ${{ env.GH_REGISTRY_PATH }}
-          subject-digest: ${{ steps.digest.outputs.DIGEST }}
-          push-to-registry: true
 
       - name: 👋 Logout
         if: github.event_name == 'workflow_dispatch'
