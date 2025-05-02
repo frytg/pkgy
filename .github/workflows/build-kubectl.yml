@@ -1,114 +1,114 @@
 name: Containerize kubectl
 
 on:
-   push:
-      branches:
-         - main
-         - dev/*
-         - chore/*
-         - feature/*
-      paths:
-         - kubectl/**
-         - .github/workflows/build-kubectl.yml
-   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev/*
+      - chore/*
+      - feature/*
+    paths:
+      - kubectl/**
+      - .github/workflows/build-kubectl.yml
+  workflow_dispatch:
 
 concurrency:
-   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
-   GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/kubectl
+  GH_REGISTRY_PATH: ghcr.io/${{ github.repository }}/kubectl
 
 permissions:
-   id-token: write
-   contents: read
-   packages: write
+  id-token: write
+  contents: read
+  packages: write
 
 jobs:
-   build:
-      runs-on: ubuntu-latest
-      outputs:
-         VERSION: ${{ steps.tag.outputs.VERSION }}
-      timeout-minutes: 20
-      container:
-         image: alpine:3.21
-      steps:
-         - name: 👀 Checkout Code
-           uses: actions/checkout@v4
-           with:
-              persist-credentials: false
-              show-progress: false
-              submodules: false
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.tag.outputs.VERSION }}
+    timeout-minutes: 20
+    container:
+      image: alpine:3.21
+    steps:
+      - name: 👀 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          show-progress: false
+          submodules: false
 
-         - name: 🛠 Setup build helper packages
-           run: apk add --no-cache cosign docker git just jq
+      - name: 🛠 Setup build helper packages
+        run: apk add --no-cache cosign docker git just jq
 
-         - name: 🛠 Run Build
-           working-directory: ./kubectl
-           run: just build
+      - name: 🛠 Run Build
+        working-directory: ./kubectl
+        run: just build
 
-         - name: 🙅 Notify end
-           if: github.event_name != 'workflow_dispatch'
-           run: echo "Not pushing image to registry" >> $GITHUB_STEP_SUMMARY
+      - name: 🙅 Notify end
+        if: github.event_name != 'workflow_dispatch'
+        run: echo "Not pushing image to registry" >> $GITHUB_STEP_SUMMARY
 
-         - name: 🔑 Login to Registry
-           if: github.event_name == 'workflow_dispatch'
-           run: echo ${{ github.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: 🔑 Login to Registry
+        if: github.event_name == 'workflow_dispatch'
+        run: echo ${{ github.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-         - name: 🏷 Create tag
-           id: tag
-           if: github.event_name == 'workflow_dispatch'
-           run: |
-              # Add custom wrapper syntax
-              VERSION=day$(date +%Y-%m-%d)--build${{ github.run_number }}
+      - name: 🏷 Create tag
+        id: tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          # Add custom wrapper syntax
+          VERSION=day$(date +%Y-%m-%d)--build${{ github.run_number }}
 
-              # Update var
-              echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          # Update var
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-         - name: 🚀 Tag & Push docker
-           id: push-docker
-           if: github.event_name == 'workflow_dispatch'
-           run: |
-              REMOTE_IMAGE=$GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
-              docker tag kubectl:latest $REMOTE_IMAGE
-              docker push $REMOTE_IMAGE --quiet
+      - name: 🚀 Tag & Push docker
+        id: push-docker
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          REMOTE_IMAGE=$GH_REGISTRY_PATH:${{ steps.tag.outputs.VERSION }}
+          docker tag kubectl:latest $REMOTE_IMAGE
+          docker push $REMOTE_IMAGE --quiet
 
-              # add digest to output
-              DIGEST=$(docker inspect $REMOTE_IMAGE | jq -r ".[0].RepoDigests[0]")
-              echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
+          # add digest to output
+          DIGEST=$(docker inspect $REMOTE_IMAGE | jq -r ".[0].RepoDigests[0]")
+          echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
 
-              echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-              echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "## Image pushed " >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "$REMOTE_IMAGE" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-         - name: 🔑  Sign Image with Cosign
-           id: cosign-sign
-           if: github.event_name == 'workflow_dispatch'
-           env:
-              COSIGN_YES: "true"
-           run: cosign sign ${{ steps.push-docker.outputs.DIGEST }}
+      - name: 🔑  Sign Image with Cosign
+        id: cosign-sign
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          COSIGN_YES: "true"
+        run: cosign sign ${{ steps.push-docker.outputs.DIGEST }}
 
-         - name: 🔐 Verify Image with Cosign
-           id: cosign-verify
-           if: github.event_name == 'workflow_dispatch'
-           run: |
-              VERIFIED=$(cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
-              	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
-               --certificate-identity=https://github.com/${{ github.workflow_ref }})
+      - name: 🔐 Verify Image with Cosign
+        id: cosign-verify
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          VERIFIED=$(cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
+          	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+           --certificate-identity=https://github.com/${{ github.workflow_ref }})
 
-              echo "## Signed and Verified image using Cosign" >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
-              echo "$VERIFIED" | jq >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "## Signed and Verified image using Cosign" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+          echo "$VERIFIED" | jq >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-              echo "## Verify yourself using Cosign" >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-              echo "cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
-              	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
-               --certificate-identity=https://github.com/${{ github.workflow_ref }}" >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "## Verify yourself using Cosign" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "cosign verify ${{ steps.push-docker.outputs.DIGEST }} \
+          	--certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+           --certificate-identity=https://github.com/${{ github.workflow_ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-         - name: 👋 Logout
-           if: github.event_name == 'workflow_dispatch'
-           run: docker logout
+      - name: 👋 Logout
+        if: github.event_name == 'workflow_dispatch'
+        run: docker logout

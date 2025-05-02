@@ -29,6 +29,6 @@ curl -v -x localhost:3128 https://ipinfo.io
 Replace localhost with the IP address of the machine running the proxy.
 Be mindful that this can be abused. Therefore make sure to configure the proxy with appropriate authentication and access controls.
 
-## Links:
+## Links
 
 - G3 repository: [`bytedance/g3`](https://github.com/bytedance/g3)
