@@ -41,7 +41,7 @@ jobs:
         - /usr/local/cargo/registry:/usr/local/cargo/registry
     steps:
       - name: 👀 Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           persist-credentials: false
           show-progress: false
