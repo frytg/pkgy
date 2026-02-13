@@ -18,6 +18,7 @@ resolver:
     type: c-ares
     server:
       - "2a13:1001::86:54:11:100"
+      - "86.54.11.100"
 
 # direct_fixed docs: https://g3-project.readthedocs.io/projects/g3proxy/en/latest/configuration/escapers/direct_fixed.html
 escaper:
