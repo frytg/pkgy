@@ -14,7 +14,7 @@ on:
     inputs:
       g3-version:
         required: true
-        description: GitHub tagged version
+        description: GitHub tagged version (no "v" prefix)
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -41,7 +41,7 @@ jobs:
         - /usr/local/cargo/registry:/usr/local/cargo/registry
     steps:
       - name: 👀 Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
           show-progress: false

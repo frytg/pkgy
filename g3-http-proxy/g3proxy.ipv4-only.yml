@@ -12,13 +12,12 @@ server:
       address: "0.0.0.0:3128"
 
 # c-ares docs: https://g3-project.readthedocs.io/projects/g3proxy/en/latest/configuration/resolvers/c_ares.html
-# default dns servers: https://www.dns0.eu
+# default dns servers: https://joindns4.eu/for-public
 resolver:
   - name: dns
     type: c-ares
     server:
-      - "193.110.81.0"
-      - "185.253.5.0"
+      - "86.54.11.100"
 
 # direct_fixed docs: https://g3-project.readthedocs.io/projects/g3proxy/en/latest/configuration/escapers/direct_fixed.html
 escaper:
