@@ -14,9 +14,31 @@ Either run the build scripts yourself or use the packages from GitHub registry. 
 
 See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy](https://github.com/users/frytg/packages?repo_name=pkgy)
 
-- [`curl`](./curl/) - curl alpine image
 - [`g3-http-proxy`](./g3-http-proxy/) - standalone container image with http forward proxy
-- [`kubectl`](./kubectl/) - kubectl alpine image
+
+### curl and kubectl
+
+The `curl` and `kubectl` images were removed from this repository. For ad-hoc container images with these tools (and others), use [nixery.dev](https://nixery.dev/) instead — it builds images on demand from Nix packages:
+
+```sh
+docker run --rm nixery.dev/curl curl --version
+docker run --rm nixery.dev/kubectl kubectl version --client
+```
+
+For interactive shells, include the `shell` meta-package:
+
+```sh
+docker run -it --rm nixery.dev/shell/curl bash
+docker run -it --rm nixery.dev/shell/kubectl bash
+```
+
+In Kubernetes:
+
+```yaml
+image: nixery.dev/curl
+# or
+image: nixery.dev/kubectl
+```
 
 ## Signed Containers
 
