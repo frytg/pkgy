@@ -118,9 +118,10 @@ static String formatCompact(uint64_t n) {
 }
 
 /**
- * Shorten "anthropic/claude-sonnet-4" to "claude-sonnet-4".
- * @param full provider/model string
- * @returns model name without provider prefix
+ * Display helper: strip a provider prefix if present.
+ * Grouping of dated snapshots (`-YYYYMMDD`) is done by the activity API.
+ * @param full provider/model or already-short name
+ * @returns name without provider prefix
  */
 static String shortModel(const String &full) {
 	int slash = full.indexOf('/');
@@ -231,6 +232,7 @@ static void mergeTop(
 
 /**
  * Apply the active org view to fill Activity.top from the cached per-org lists.
+ * API already returns canonical model names; this only picks / merges orgs.
  * @param a activity with personalTop/workTop already populated
  * @param org view: "all" | "personal" | "work"
  */
@@ -268,6 +270,7 @@ static Totals readTotals(JsonObjectConst o) {
 
 /**
  * Read up to TOP_IN_CAP top-models from an org object.
+ * Model names are expected already-canonical from the activity API.
  * @param o org object
  * @param out destination buffer
  * @returns number of models written
@@ -279,7 +282,8 @@ static int readTopModels(JsonObjectConst o, TopModel *out) {
 	if (arr.isNull()) return 0;
 	for (JsonObjectConst m : arr) {
 		if (n >= TOP_IN_CAP) break;
-		out[n].model = m["model"].as<const char *>();
+		const char *raw = m["model"].as<const char *>();
+		out[n].model = shortModel(raw ? String(raw) : String());
 		out[n].tokens = m["tokens"].as<uint64_t>();
 		n++;
 	}
@@ -565,7 +569,7 @@ static void renderActivity(const Activity &a, const char *org) {
 			sprite.print(tok);
 
 			sprite.setCursor(nameX, y);
-			sprite.print(shortModel(a.top[i].model));
+			sprite.print(a.top[i].model);
 		}
 	} else {
 		sprite.setCursor(4, listRowY0);
