@@ -1,0 +1,37 @@
+[package]
+name = "githubchart-rust"
+version = "5.1.4"
+authors = ["frytg"]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/frytg/githubchart-rust"
+description = "GitHub contribution graph generator in Rust/WASM"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+regex = "1.11.1"
+reqwest = { version = "0.11", features = ["json"] }
+scraper = "0.17"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde-wasm-bindgen = "0.5"
+getrandom = { version = "0.2", features = ["js"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = { version = "1.0", features = ["rt-multi-thread", "macros"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+js-sys = "0.3"
+tokio = { version = "1.0", features = ["sync", "macros"] }
+getrandom = { version = "0.2", features = ["js"] }
+
+[profile.release]
+# optimizations from https://github.com/johnthagen/min-sized-rust
+opt-level = 'z' # optimize for size
+lto = true # enable link time optimization
+codegen-units = 1 # reduce parallel codegen units to increase optimizations
+panic = 'abort' # abort on panic
+strip = true # strip symbols from binary

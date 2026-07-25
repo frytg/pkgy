@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>GitHub Chart Demo</title>
+  </head>
+  <body>
+    <div id="chart"></div>
+    <script type="module">
+      import { initWasm, generateGitHubChart } from "./index.js";
+
+      async function init() {
+        await initWasm();
+        const svg = await generateGitHubChart("frytg", "default");
+        document.getElementById("chart").innerHTML = svg;
+      }
+
+      init();
+    </script>
+  </body>
+</html>
