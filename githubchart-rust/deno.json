@@ -1,0 +1,18 @@
+{
+	"tasks": {
+		"start": "deno run --allow-net --allow-read web/deno.ts",
+		"deploy": "deno deploy --prod"
+	},
+	"deploy": {
+		"org": "frytg",
+		"app": "githubchart-rust",
+		"runtime": {
+			"mode": "dynamic",
+			"entrypoint": "web/deno.ts"
+		}
+	}
+}
+
+
+
+

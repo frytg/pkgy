@@ -1,0 +1,46 @@
+set export
+
+# list recipes
+_default:
+	just --list
+
+# format rust sources
+fmt:
+	cargo fmt
+
+# run unit tests
+test:
+	cargo test
+
+# build release binary (size-optimized)
+build:
+	cargo build --release
+
+# run CLI against a username (output: chart.svg)
+run username="frytg" color="default":
+	cargo run -- chart.svg -u {{ username }} -c {{ color }}
+
+# build wasm-pack targets for web + deno
+wasm:
+	rm -rf pkg
+	wasm-pack build --target deno --out-name githubchart_rust_deno
+	wasm-pack build --target web
+	rm -f pkg/.gitignore
+
+# run the Deno Deploy entrypoint locally
+start:
+	deno run --allow-net --allow-read web/deno.ts
+
+# create the Deno Deploy app (first time only)
+deploy-create:
+	deno deploy create \
+		--org frytg \
+		--app githubchart-rust \
+		--source local \
+		--runtime-mode dynamic \
+		--entrypoint web/deno.ts \
+		--region ams
+
+# deploy to Deno Deploy production
+deploy:
+	deno deploy --prod
