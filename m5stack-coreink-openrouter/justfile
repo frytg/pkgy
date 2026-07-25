@@ -1,0 +1,25 @@
+set export
+
+_default:
+	just --list
+
+# build the firmware image (no flash)
+build:
+	pio run
+
+# build + flash to the connected CoreInk over USB-C
+flash:
+	pio run -t upload
+
+# open the serial monitor (Ctrl+C to exit)
+monitor:
+	pio device monitor
+
+# nuke the PlatformIO cache and build artifacts, then rebuild
+clean:
+	pio run -t clean
+	rm -rf .pio
+
+# full clean build: wipe cache, install deps, compile
+rebuild: clean build monitor
+reflash: clean build flash monitor
