@@ -1,0 +1,23 @@
+# FRYTG socials
+
+_default:
+	just --list
+
+fonts:
+	deno task fonts
+
+dev:
+	aubx vite
+
+build:
+	deno task fonts
+	aubr build
+
+preview:
+	aubx vite preview
+
+lint:
+	aubx vue-tsc -b --pretty false
+
+deploy:
+	deno deploy

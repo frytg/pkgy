@@ -1,0 +1,21 @@
+{
+	"tasks": {
+		"fonts": "deno run --allow-net --allow-read --allow-write scripts/download-fonts.ts",
+		"dev": "npm run dev",
+		"build": "deno task fonts && vite build",
+		"preview": "npm run preview",
+		"lint": "npx vue-tsc -b --pretty false"
+	},
+	"deploy": {
+		"app": "social-toolkit",
+		"org": "frytg",
+		"install": "npm ci",
+		"build": "deno task build",
+		"runtime": {
+			"type": "static",
+			"cwd": "./dist",
+			"spa": true
+		}
+	}
+}
+
