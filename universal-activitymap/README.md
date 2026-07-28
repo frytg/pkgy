@@ -71,7 +71,7 @@ Deployed at <https://universal-activitymap.frytg.deno.net>. Each route returns a
 
 ![bluesky dark](https://universal-activitymap.frytg.deno.net/bluesky/frytg.digital/dark)
 
-Data sources: GitHub's public contributions page, tangled.org's profile punchcard (current year), Mastodon's public statuses API, and Bluesky's public AppView feed (the post-based providers cover the last 14 weeks, ending at the newest post, capped at 300 posts). Unknown handles yield `404` (tangled answers unknown profiles with an empty 200 shell, so it surfaces as "no data" rather than an upstream error).
+Data sources: GitHub's public contributions page, tangled.org's profile punchcard (current year), Mastodon's public statuses API, and Bluesky's public AppView feed (the post-based providers cover the last 14 weeks, ending at the newest post, capped at 200 posts for Mastodon and 300 for Bluesky). Unknown handles yield `404` (tangled answers unknown profiles with an empty 200 shell, so it surfaces as "no data" rather than an upstream error).
 
 Returns `image/svg+xml` with a 1h cache header. Errors come back as JSON: `400` for unknown themes, `404` when no activity data was found, `502` when the upstream provider request failed.
 
