@@ -1,0 +1,17 @@
+{
+	"name": "universal-activitymap",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"dependencies": {
+		"@hono/node-server": "^2.0.10",
+		"hono": "^4.12.5",
+		"node-html-parser": "^7.0.1",
+		"undici": "^7.24.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/node": "^24.13.2",
+		"typescript": "~6.0.2"
+	}
+}

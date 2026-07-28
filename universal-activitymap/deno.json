@@ -1,0 +1,13 @@
+{
+	"exclude": ["node_modules"],
+	"deploy": {
+		"app": "universal-activitymap",
+		"org": "frytg",
+		"install": "deno x --ignore-scripts=false @endevco/aube ci",
+		"build": "",
+		"runtime": {
+			"mode": "dynamic",
+			"entrypoint": "src/deno.ts"
+		}
+	}
+}

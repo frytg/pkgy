@@ -1,0 +1,46 @@
+# universal-activitymap
+
+_default:
+	just --list
+
+# provision pinned tools (node, aube) and install dependencies
+install:
+	mise install
+	aube install
+
+# run the server with auto-reload
+dev:
+	node --watch src/index.ts
+
+# run the server
+start:
+	node src/index.ts
+
+# run the server with deno (as on deno deploy)
+deno:
+	deno run --allow-net --allow-env=PORT src/deno.ts
+
+# typecheck the deno entrypoint
+deno-check:
+	deno check src/deno.ts
+
+# deploy to deno deploy (needs deployctl + DENO_DEPLOY_TOKEN, adjust --project)
+deploy:
+	deno deploy
+
+# typecheck and lint
+lint:
+	aubr tsc --noEmit
+	aubr biome check .
+
+# run unit tests (offline)
+test:
+	node --test $(find src -name '*.test.ts' -not -name '*.integration.test.ts')
+
+# run integration tests against live APIs
+test-integration:
+	node --test 'src/**/*.integration.test.ts'
+
+# run all tests
+test-all:
+	node --test 'src/**/*.test.ts'
