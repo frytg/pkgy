@@ -1,6 +1,8 @@
 # pkgy
 
-ˈpækədʒi – collection of recipes and self-/ pre-compiled packages or recipes for it (work in progress)
+ˈpækədʒi – collection of recipes and self-/ pre-compiled packages or recipes for it (work in progress).
+
+The main version of this repo lives on [tangled.org/frytg.digital/pkgy](https://tangled.org/frytg.digital/pkgy) with a mirror on [github.com/frytg/pkgy](https://github.com/frytg/pkgy).
 
 ## Why?
 
@@ -40,15 +42,6 @@ image: nixery.dev/curl
 # or
 image: nixery.dev/kubectl
 ```
-
-## Signed Containers
-
-Some containers are signed using Sigstore Cosign. The GitHub Actions runs will print commands how to verify the containers yourself.
-
-More also here:
-
-- [Sigstore: How it works](https://www.sigstore.dev/how-it-works)
-- [Sigstore Docs](https://docs.sigstore.dev)
 
 ## License
 
