@@ -1,4 +1,5 @@
 import type { ActivityDay } from './providers/types.ts'
+import type { Theme } from './themes.ts'
 
 const CUBE_SIZE = 12
 const X_PAD = 27
@@ -102,15 +103,27 @@ const renderMonths = (days: ActivityDay[]): string => {
 }
 
 /**
+ * Builds the dark-mode override block for auto themes. Cells keep their light inline fill; the
+ * `!important` rules win over inline styles when the viewer's system is in dark mode.
+ * @param dark - dark overrides from the theme
+ * @returns svg style element with the media query
+ */
+const renderDarkStyle = (dark: NonNullable<Theme['dark']>): string => {
+	const cells = dark.cells.map((color, i) => `rect[data-level="${i}"]{fill:${color} !important;}`).join('')
+	return `<style>@media (prefers-color-scheme: dark) {${cells}text{fill:${dark.text} !important;}}</style>`
+}
+
+/**
  * Renders the activity chart as a standalone SVG document.
  * @param days - activity days sorted ascending by date
- * @param colors - theme colors, 5 entries from empty to max intensity
+ * @param theme - theme with cell colors and optional dark-mode overrides
  * @returns svg markup
  */
-export const renderChart = (days: ActivityDay[], colors: readonly string[]): string => {
+export const renderChart = (days: ActivityDay[], theme: Theme): string => {
 	const grid = matrix(days)
 	const width = CUBE_SIZE * grid.length + X_PAD
 	const height = CUBE_SIZE * DAYS_PER_WEEK + Y_PAD
+	const darkStyle = theme.dark ? renderDarkStyle(theme.dark) : ''
 
-	return `<svg width="${width}" height="${height}" version="1.1" xmlns="http://www.w3.org/2000/svg">${renderPoints(grid, colors)}${renderWeekdays()}${renderMonths(days)}</svg>`
+	return `<svg width="${width}" height="${height}" version="1.1" xmlns="http://www.w3.org/2000/svg">${darkStyle}${renderPoints(grid, theme.cells)}${renderWeekdays()}${renderMonths(days)}</svg>`
 }
