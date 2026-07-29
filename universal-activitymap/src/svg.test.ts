@@ -62,4 +62,21 @@ describe('renderChart', () => {
 			}
 		})
 	})
+
+	describe('styles', () => {
+		it('defaults to the rounded rect (rx=2)', () => {
+			const svg = renderChart([{ date: '2025-01-06', level: 1 }], theme)
+			assert.ok(svg.includes('rx="2" ry="2"'))
+		})
+
+		it('renders square corners with style=square', () => {
+			const svg = renderChart([{ date: '2025-01-06', level: 1 }], theme, { style: 'square' })
+			assert.ok(svg.includes('rx="0" ry="0"'))
+		})
+
+		it('renders fully rounded corners with style=round', () => {
+			const svg = renderChart([{ date: '2025-01-06', level: 1 }], theme, { style: 'round' })
+			assert.ok(svg.includes('rx="5" ry="5"'))
+		})
+	})
 })

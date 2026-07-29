@@ -10,6 +10,20 @@ const MIN_MONTH_LABEL_GAP = 40
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const WEEKDAY_LABELS = ['Mon', 'Wed', 'Fri']
 
+/** Cell shape presets, selected by the `style` query param. Maps to the rect corner radius. */
+export type Style = 'default' | 'square' | 'round'
+export const STYLES: readonly Style[] = ['default', 'square', 'round']
+const STYLE_RX: Record<Style, number> = { default: 2, square: 0, round: 5 }
+
+/** @returns true when the value is a known {@link Style} */
+export const isStyle = (value: string): value is Style => (STYLES as readonly string[]).includes(value)
+
+/** Presentation options applied at render time. */
+export interface RenderOptions {
+	/** cell shape preset, defaults to `default` */
+	readonly style?: Style
+}
+
 const TEXT_STYLE =
 	"fill:#767676;text-anchor:start;text-align:center;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';white-space:nowrap;"
 
@@ -52,14 +66,16 @@ const matrix = (days: ActivityDay[]): Point[][] => {
  * Adds one `<rect>` per day to the svg body.
  * @param grid - week-column grid from {@link matrix}
  * @param colors - theme colors
+ * @param style - cell shape preset controlling corner radius
  * @returns svg fragment with all day cells
  */
-const renderPoints = (grid: Point[][], colors: readonly string[]): string => {
+const renderPoints = (grid: Point[][], colors: readonly string[], style: Style): string => {
+	const rx = STYLE_RX[style]
 	let out = ''
 	for (const [x, week] of grid.entries()) {
 		for (const [y, point] of week.entries()) {
 			if (point.level < 0 || !point.date.includes('-')) continue
-			out += `<rect x="${x * CUBE_SIZE + X_PAD}" y="${y * CUBE_SIZE + Y_PAD}" rx="2" ry="2" width="10" height="10" style="fill:${pointColor(point.level, colors)};" data-level="${point.level}" data-date="${point.date}" />`
+			out += `<rect x="${x * CUBE_SIZE + X_PAD}" y="${y * CUBE_SIZE + Y_PAD}" rx="${rx}" ry="${rx}" width="10" height="10" style="fill:${pointColor(point.level, colors)};" data-level="${point.level}" data-date="${point.date}" />`
 		}
 	}
 	return out
@@ -117,13 +133,15 @@ const renderDarkStyle = (dark: NonNullable<Theme['dark']>): string => {
  * Renders the activity chart as a standalone SVG document.
  * @param days - activity days sorted ascending by date
  * @param theme - theme with cell colors and optional dark-mode overrides
+ * @param options - presentation options (cell shape)
  * @returns svg markup
  */
-export const renderChart = (days: ActivityDay[], theme: Theme): string => {
+export const renderChart = (days: ActivityDay[], theme: Theme, options: RenderOptions = {}): string => {
+	const style: Style = options.style ?? 'default'
 	const grid = matrix(days)
 	const width = CUBE_SIZE * grid.length + X_PAD
 	const height = CUBE_SIZE * DAYS_PER_WEEK + Y_PAD
 	const darkStyle = theme.dark ? renderDarkStyle(theme.dark) : ''
 
-	return `<svg width="${width}" height="${height}" version="1.1" xmlns="http://www.w3.org/2000/svg">${darkStyle}${renderPoints(grid, theme.cells)}${renderWeekdays()}${renderMonths(days)}</svg>`
+	return `<svg width="${width}" height="${height}" version="1.1" xmlns="http://www.w3.org/2000/svg">${darkStyle}${renderPoints(grid, theme.cells, style)}${renderWeekdays()}${renderMonths(days)}</svg>`
 }

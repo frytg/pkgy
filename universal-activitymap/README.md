@@ -23,7 +23,7 @@ GET /:provider/:username/:theme?
   - `tangled`: handle or DID, e.g. `frytg.digital`
   - `mastodon`: full handle in `user@host` form, e.g. `frytg@beoriginal.social`
   - `bluesky`: handle, e.g. `frytg.digital`
-- `:theme` — optional, one of `default` (fallback), `dark`
+- `:theme` — optional path segment, one of `default` (fallback), `default-auto`, `dark`, `bluesky`, `bluesky-auto`, `mastodon`, `mastodon-auto`. The `-auto` variants flip to a dark palette via a `prefers-color-scheme` media query, so a single URL follows the viewer's system setting.
 
 ```sh
 curl http://localhost:3000/github/frytg/dark > chart.svg
@@ -31,49 +31,51 @@ curl http://localhost:3000/tangled/frytg.digital > chart.svg
 curl http://localhost:3000/mastodon/frytg@beoriginal.social > chart.svg
 ```
 
+### Query params
+
+Presentation is also configurable via query params, which override the path segment and compose freely:
+
+- `theme` — same set as the `:theme` path segment; wins when both are present
+- `weeks` — tail-slice the activity window to the last N weeks (integer 1–53); handy for shrinking the year-long `github`/`tangled` charts to a compact widget
+- `style` — cell shape preset: `default` (rx=2), `square` (rx=0), `round` (rx=5)
+
+```sh
+curl 'http://localhost:3000/github/frytg?theme=bluesky-auto&weeks=14&style=round' > chart.svg
+```
+
+Unknown themes/styles or out-of-range `weeks` return `400` with the available options in the JSON body.
+
 ## Live examples
 
 Deployed at <https://universal-activitymap.frytg.deno.net>. Each route returns an SVG you can drop straight into an `<img>` or markdown:
 
 ### GitHub — `GET /github/:user/:theme?`
 
-[default](https://universal-activitymap.frytg.deno.net/github/frytg)
+[default-auto](https://universal-activitymap.frytg.deno.net/github/frytg/default-auto)
 
-![github default](https://universal-activitymap.frytg.deno.net/github/frytg)
-
-[dark](https://universal-activitymap.frytg.deno.net/github/frytg/dark)
-
-![github dark](https://universal-activitymap.frytg.deno.net/github/frytg/dark)
+![github default-auto](https://universal-activitymap.frytg.deno.net/github/frytg/default-auto)
 
 ### tangled — `GET /tangled/:handle/:theme?`
 
-[default](https://universal-activitymap.frytg.deno.net/tangled/frytg.digital)
+[default-auto](https://universal-activitymap.frytg.deno.net/tangled/frytg.digital/default-auto)
 
-![tangled default](https://universal-activitymap.frytg.deno.net/tangled/frytg.digital)
-
-[dark](https://universal-activitymap.frytg.deno.net/tangled/frytg.digital/dark)
-
-![tangled dark](https://universal-activitymap.frytg.deno.net/tangled/frytg.digital/dark)
+![tangled default-auto](https://universal-activitymap.frytg.deno.net/tangled/frytg.digital/default-auto)
 
 ### Mastodon — `GET /mastodon/:user@:host/:theme?`
 
-[default](https://universal-activitymap.frytg.deno.net/mastodon/frytg@beoriginal.social)
+[default-auto](https://universal-activitymap.frytg.deno.net/mastodon/frytg@beoriginal.social/default-auto)
 
-![mastodon default](https://universal-activitymap.frytg.deno.net/mastodon/frytg@beoriginal.social)
+![mastodon default-auto](https://universal-activitymap.frytg.deno.net/mastodon/frytg@beoriginal.social/default-auto)
 
 ### Bluesky — `GET /bluesky/:handle/:theme?`
 
-[default](https://universal-activitymap.frytg.deno.net/bluesky/frytg.digital)
+[default-auto](https://universal-activitymap.frytg.deno.net/bluesky/frytg.digital/default-auto)
 
-![bluesky default](https://universal-activitymap.frytg.deno.net/bluesky/frytg.digital)
-
-[dark](https://universal-activitymap.frytg.deno.net/bluesky/frytg.digital/dark)
-
-![bluesky dark](https://universal-activitymap.frytg.deno.net/bluesky/frytg.digital/dark)
+![bluesky default-auto](https://universal-activitymap.frytg.deno.net/bluesky/frytg.digital/default-auto)
 
 Data sources: GitHub's public contributions page, tangled.org's profile punchcard (current year), Mastodon's public statuses API, and Bluesky's public AppView feed (the post-based providers cover the last 14 weeks, ending at the newest post, capped at 200 posts for Mastodon and 300 for Bluesky). Unknown handles yield `404` (tangled answers unknown profiles with an empty 200 shell, so it surfaces as "no data" rather than an upstream error).
 
-Returns `image/svg+xml` with a 1h cache header. Errors come back as JSON: `400` for unknown themes, `404` when no activity data was found, `502` when the upstream provider request failed.
+Returns `image/svg+xml` with a 1h cache header. Errors come back as JSON: `400` for unknown themes, styles, or out-of-range `weeks`, `404` when no activity data was found, `502` when the upstream provider request failed.
 
 `PORT` env var overrides the default port (`3000` on node, `8000` on deno).
 
