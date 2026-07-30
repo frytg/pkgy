@@ -1,6 +1,0 @@
-secrets.yaml
-.esphome/
-.vscode/
-*.bin
-*.elf
-.DS_Store

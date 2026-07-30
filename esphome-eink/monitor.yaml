@@ -1,36 +1,35 @@
-# reTerminal E1002 — Discogs album frame
+# reTerminal E1001 — e-ink monitor (B&W)
 #
-# Pulls an 800×480 Spectra-6 PNG from your backend and paints full-screen.
-# Device does no layout: the server composes the frame (Discogs + render).
+# Pulls an 800×480 1-bit PNG from your backend and paints full-screen.
+# Device does no layout: OpenRouter + Cursor + activity maps render on the server.
 #
 # Expected endpoint on frame_base_url:
-#   GET /ext-api/e-ink-discogs/frame.png  — always a fresh screenshot (~5–6s)
+#   GET /ext-api/e-ink-monitor/frame.png  — always a fresh screenshot (~5–8s)
 #
 # Cadence:
-#   deep sleep 6h  →  wake  →  GET frame.png  →  refresh panel  →  sleep
-#   green button   →  wake  →  GET frame.png  →  sleep  (same URL; backend is always new)
+#   deep sleep 20min  →  wake  →  GET frame.png  →  refresh panel  →  sleep
+#   green button   →  wake  →  GET frame.png  →  sleep
 #
 # Sleep model (important):
 #   Do NOT deep_sleep.enter from on_download_finished right after component.update.
 #   epaper refresh is slow/async; entering sleep mid-refresh blanks the cycle.
-#   Pattern: on_download only paints; run_duration is the deadman that sleeps
-#   after enough wall time for panel refresh. Safety script also sleeps after
-#   an explicit post-refresh delay if still awake.
+#   Pattern: on_download only paints; wait panel_refresh_wait; then sleep.
+#   run_duration is the deadman if that path never completes.
 #
-# Fill secrets.yaml first. Set frame_base_url. Flash with: just run
+# Fill secrets.yaml first. Set frame_base_url. Flash with: just run monitor
 
 substitutions:
-  device_name: reterminal-discogs
-  friendly_name: Discogs Frame
+  device_name: reterminal-monitor
+  friendly_name: E-ink Monitor
   # backend origin the device can reach (LAN/VPN). no trailing slash.
   frame_base_url: "http://10.0.17.17:8080"
-  # how long to stay awake after boot (download ~6s + panel refresh headroom)
-  run_duration: "120s"
-  # how long to sleep between automatic wakes
-  sleep_duration: "6h"
-  # wait after kicking the panel before an explicit sleep enter
-  panel_refresh_wait: "50s"
-  ap_password: "discogsframe"
+  # how long to stay awake after boot (download ~8s + panel refresh headroom)
+  run_duration: "90s"
+  # how long to sleep between automatic wakes (usage dashboards want fresher pulls)
+  sleep_duration: "20min"
+  # wait after kicking the panel before an explicit sleep enter (B&W is faster than Spectra)
+  panel_refresh_wait: "20s"
+  ap_password: "einkmonitor"
 
 esphome:
   name: ${device_name}
@@ -49,7 +48,7 @@ esp32:
   flash_size: 16MB
   variant: esp32s3
 
-# 800×480 RGB needs PSRAM; E1002 has 8MB octal
+# frame buffer + PNG decode need PSRAM
 psram:
   mode: octal
   speed: 80MHz
@@ -61,7 +60,7 @@ logger:
     # component levels must be >= global level severity
     online_image: INFO
     http_request: INFO
-    epaper_spi: INFO
+    waveshare_epaper: INFO
 
 # Optional Home Assistant — uncomment if used
 # api:
@@ -78,7 +77,7 @@ wifi:
   min_auth_mode: WPA2
   fast_connect: true
   on_connect:
-    - logger.log: "wifi up — pulling frame"
+    - logger.log: "wifi up — pulling monitor frame"
     # pull after Wi‑Fi is actually up (on_boot is too early / races join)
     - script.execute: pull_frame
   on_disconnect:
@@ -125,13 +124,13 @@ binary_sensor:
       - delayed_on: 20ms
     on_press:
       then:
-        - logger.log: "button: new album"
+        - logger.log: "button: refresh monitor"
         - script.execute: pull_frame
 
 button:
   - platform: template
     name: "Refresh Frame"
-    icon: mdi:album
+    icon: mdi:monitor-dashboard
     on_press:
       - script.execute: pull_frame
 
@@ -157,25 +156,25 @@ spi:
   mosi_pin: GPIO9
 
 http_request:
-  useragent: "reterminal-e1002-discogs/0.1"
+  useragent: "reterminal-e1001-monitor/0.1"
   timeout: 90s
-  # backend always renders (~5–6s typical); leave headroom for cold gowitness
+  # backend always renders (~5–8s typical); leave headroom for cold gowitness
   watchdog_timeout: 120s
   verify_ssl: false
 
 image:
   - platform: online_image
-    id: discogs_frame
+    id: monitor_frame
     format: PNG
-    type: RGB
+    # monochrome panel — server already dumps 1-bit; BINARY keeps RAM small
+    type: BINARY
     resize: 800x480
     buffer_size: 65536
-    url: "${frame_base_url}/ext-api/e-ink-discogs/frame.png"
+    url: "${frame_base_url}/ext-api/e-ink-monitor/frame.png"
     update_interval: never
     on_download_finished:
       then:
         - logger.log: "frame downloaded — refreshing panel"
-        # only paint here; sleep is handled by show_and_sleep / run_duration
         - script.execute: show_and_sleep
     on_error:
       then:
@@ -186,14 +185,27 @@ image:
         - deep_sleep.enter: deep_sleep_1
 
 display:
-  - platform: epaper_spi
+  # ESPHome has no Seeed-reTerminal-E1001 board model — E1001 mono uses waveshare_epaper
+  # per Seeed wiki (same pins as E1002 board; busy inverted).
+  # Fallback if hatchy: model 7.50inv2alt
+  - platform: waveshare_epaper
     id: epaper_display
-    # board model fixes CS=10 DC=11 RESET=12 BUSY=13 for E1002
-    model: Seeed-reTerminal-E1002
+    model: 7.50inv2
+    cs_pin: GPIO10
+    dc_pin: GPIO11
+    reset_pin:
+      number: GPIO12
+      inverted: false
+    busy_pin:
+      number: GPIO13
+      inverted: true
     update_interval: never
     lambda: |-
-      it.fill(Color(255, 255, 255));
-      it.image(0, 0, id(discogs_frame));
+      // Binary epaper: COLOR_ON ≈ black ink, COLOR_OFF ≈ white paper.
+      // BINARY decode of a black-on-white PNG often has ON bits on the light
+      // areas — map ON→white, OFF→black so we get black text on white.
+      it.fill(COLOR_OFF);
+      it.image(0, 0, id(monitor_frame), COLOR_OFF, COLOR_ON);
 
 # -----------------------------------------------------------------------------
 # Scripts
@@ -204,12 +216,12 @@ script:
   - id: pull_frame
     mode: restart
     then:
-      - logger.log: "pull frame (always fresh on server)"
+      - logger.log: "pull monitor frame (always fresh on server)"
       - online_image.set_url:
-          id: discogs_frame
-          url: "${frame_base_url}/ext-api/e-ink-discogs/frame.png"
+          id: monitor_frame
+          url: "${frame_base_url}/ext-api/e-ink-monitor/frame.png"
 
-  # Kick panel, then wait for the slow Spectra full refresh before sleep.
+  # Kick panel, then wait for refresh before sleep.
   # mode: single prevents double-enter if download fires twice.
   - id: show_and_sleep
     mode: single

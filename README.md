@@ -20,9 +20,7 @@ See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy
 - [`universal-activitymap`](./universal-activitymap/) - hono server rendering activity charts (github, ...) as SVGs — live at [universal-activitymap.frytg.deno.net](https://universal-activitymap.frytg.deno.net)
 - [`social-toolkit`](./social-toolkit/) - dark-mode tools for social image overlays (halftone, gpx) — live at [social-toolkit.frytg.deno.net](https://social-toolkit.frytg.deno.net)
 - [`m5stack-coreink-openrouter`](./m5stack-coreink-openrouter/) - CoreInk firmware: OpenRouter activity JSON → 1-bit e-ink
-- [`reterminal-e1002-discogs`](./reterminal-e1002-discogs/) - E1002 ESPHome client: pulls a Discogs album `frame.png` onto Spectra 6
-- [`reterminal-e1001-monitor`](./reterminal-e1001-monitor/) - E1001 ESPHome client: pulls e-ink monitor `frame.png` (OpenRouter + Cursor) onto B&W panel
-- [`trmnl-og-frame`](./trmnl-og-frame/) - official TRMNL OG 7.5″ (ESP32-C3) ESPHome client: live PNG frame (long HTTP timeout; no Alias)
+- [`esphome-eink`](./esphome-eink/) - ESPHome e-ink clients: TRMNL OG (`frame`), E1001 monitor, E1002 discogs — `just run {frame,monitor,discogs}`
 
 ### curl and kubectl
 

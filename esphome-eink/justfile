@@ -1,0 +1,25 @@
+set export
+
+_default:
+	just --list
+
+# validate a config: frame | monitor | discogs
+config target:
+	esphome config {{ target }}.yaml
+
+# compile: frame | monitor | discogs
+build target:
+	esphome compile {{ target }}.yaml
+
+# flash + logs: frame | monitor | discogs
+run target:
+	esphome run {{ target }}.yaml
+alias flash := run
+
+# serial logs: frame | monitor | discogs
+logs target:
+	esphome logs {{ target }}.yaml
+
+# clean build dirs
+clean:
+	rm -rf .esphome

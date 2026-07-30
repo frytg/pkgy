@@ -4,3 +4,5 @@ secrets.yaml
 *.bin
 *.elf
 .DS_Store
+logs
+*.log

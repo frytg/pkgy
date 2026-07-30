@@ -14,7 +14,7 @@
 # or
 #   GET /ext-api/e-ink-monitor/frame.bmp if you add a monitor BMP path later
 #
-# Flash (official OG): power off → USB-C → hold BOOT → power on → release BOOT → just run
+# Flash (official OG): power off → USB-C → hold BOOT → power on → release BOOT → just run frame
 
 substitutions:
   device_name: trmnl-og-frame
