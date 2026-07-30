@@ -1,0 +1,16 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"printWidth": 120,
+	"useTabs": true,
+	"tabWidth": 4,
+	"singleQuote": true,
+	"semi": false,
+	"trailingComma": "all",
+	"endOfLine": "lf",
+	"insertFinalNewline": true,
+	"ignorePatterns": ["dist/**", "node_modules/**", "public/**", "input/**", "aube-lock.yaml", "package-lock.json"],
+	"sortTailwindcss": {
+		"stylesheet": "src/style.css",
+		"attributes": [":class"]
+	}
+}

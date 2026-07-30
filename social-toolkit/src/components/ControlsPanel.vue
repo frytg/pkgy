@@ -161,7 +161,12 @@ const decimal =
 			<section class="mb-7 sm:mb-9">
 				<div class="mb-4 flex items-center justify-between">
 					<h2 class="ui-label">Color</h2>
-					<button type="button" class="ui-link" title="Swap dash and background colors" @click="$emit('swapColors')">
+					<button
+						type="button"
+						class="ui-link"
+						title="Swap dash and background colors"
+						@click="$emit('swapColors')"
+					>
 						Swap
 					</button>
 				</div>
@@ -189,11 +194,15 @@ const decimal =
 						@change="$emit('update:exportScale', ($event.target as HTMLSelectElement).value)"
 					>
 						<option v-for="option in EXPORT_SCALE_OPTIONS" :key="option.value" :value="option.value">
-							{{ option.longEdge ? `${option.label} · ${option.longEdge} long edge` : `${option.label} · native` }}
+							{{
+								option.longEdge
+									? `${option.label} · ${option.longEdge} long edge`
+									: `${option.label} · native`
+							}}
 						</option>
 					</select>
 				</label>
-				<p class="mb-5 font-mono text-[11px] tabular-nums text-[var(--faint)]">{{ exportSizeLabel }}</p>
+				<p class="mb-5 font-mono text-[11px] text-[var(--faint)] tabular-nums">{{ exportSizeLabel }}</p>
 				<label class="flex min-h-11 items-center justify-between text-[13px] text-primary/70 sm:min-h-0">
 					<span>Include background</span>
 					<button
@@ -212,7 +221,9 @@ const decimal =
 		<div
 			class="space-y-2 border-t border-[var(--line)] px-4 pt-4 pb-[max(1.25rem,var(--safe-bottom))] sm:px-5 sm:pb-5"
 		>
-			<button type="button" class="ui-btn ui-btn-primary w-full" @click="$emit('downloadPng')">Download PNG</button>
+			<button type="button" class="ui-btn ui-btn-primary w-full" @click="$emit('downloadPng')">
+				Download PNG
+			</button>
 			<button type="button" class="ui-btn w-full" @click="$emit('downloadSvg')">Download SVG</button>
 			<button type="button" class="ui-btn-ghost w-full" @click="$emit('copyPng')">Copy PNG</button>
 			<button type="button" class="ui-btn-ghost w-full" @click="$emit('copySvg')">Copy SVG</button>

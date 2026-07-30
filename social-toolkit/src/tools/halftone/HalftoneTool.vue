@@ -289,7 +289,7 @@ onUnmounted(() => {
 
 		<section
 			class="relative min-w-0 flex-1 overflow-hidden"
-			:class="{ 'outline outline-1 outline-yellow outline-offset-[-1px]': dragOver }"
+			:class="{ 'outline outline-1 outline-offset-[-1px] outline-yellow': dragOver }"
 			@dragover="onDragOver"
 			@dragleave="onDragLeave"
 			@drop="onDrop"
@@ -312,6 +312,6 @@ onUnmounted(() => {
 			class="hidden"
 			accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
 			@change="onFileInput"
-		>
+		/>
 	</div>
 </template>

@@ -21,9 +21,16 @@ build:
 preview:
 	aubx vite preview
 
+# typecheck, lint, and check formatting
 lint:
 	aubx vue-tsc -b --pretty false
-	aubr biome check .
+	aubx oxlint .
+	aubx oxfmt --check .
+
+# write formatting fixes (incl. tailwind class sort)
+fmt:
+	aubx oxfmt .
+alias format := fmt
 
 deploy:
 	deno deploy

@@ -13,13 +13,14 @@ Dark-mode tools for social image overlays. Geist type, forest-green field, elect
 
 ## Run
 
-Toolchain is pinned in [`mise.toml`](./mise.toml) (node + [aube](https://aube.jdx.dev)); `just install` provisions both via mise and installs npm deps. Lint is `vue-tsc` + [biome](https://biomejs.dev) (root [`biome.json`](../biome.json)).
+Toolchain is pinned in [`mise.toml`](./mise.toml) (node + [aube](https://aube.jdx.dev)); `just install` provisions both via mise and installs deps. Lint/format is [Oxc](https://oxc.rs): `vue-tsc` + [oxlint](https://oxc.rs/docs/guide/usage/linter.html) (Vue + [oxlint-tailwindcss](https://oxlint-tailwindcss.pages.dev)) + [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) (incl. Tailwind class sort). Config: [`.oxlintrc.json`](./.oxlintrc.json), [`.oxfmtrc.json`](./.oxfmtrc.json).
 
 ```bash
 just install
 just fonts   # once — downloads Geist woff2 into src/style/
 just dev
 just lint
+just fmt     # write formatting + class order
 ```
 
 Or `deno task fonts && npm run dev`.

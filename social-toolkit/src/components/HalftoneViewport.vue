@@ -47,7 +47,7 @@ watch(
 			return
 		}
 		mountSession()
-	}
+	},
 )
 
 watch(
@@ -55,7 +55,7 @@ watch(
 	(settings) => {
 		session?.updateSettings(settings)
 	},
-	{ deep: true }
+	{ deep: true },
 )
 
 onBeforeUnmount(() => {

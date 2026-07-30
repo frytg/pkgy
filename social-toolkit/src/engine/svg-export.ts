@@ -302,7 +302,11 @@ export const generateImageHalftoneSvg = ({
 
 			const amount =
 				Math.max(
-					clamp(tone + (localPower + (hash21(column, row) - 0.5) * 2 * clamp(settings.randomness, 0, 1)) * 0.33, 0, 1),
+					clamp(
+						tone + (localPower + (hash21(column, row) - 0.5) * 2 * clamp(settings.randomness, 0, 1)) * 0.33,
+						0,
+						1,
+					),
 					settings.minimumTone,
 				) * 0.92
 			const strokeWidth = localWidth
@@ -347,7 +351,8 @@ export const generateImageHalftoneSvg = ({
 				`<g fill="none" stroke="${escapeAttribute(ink)}" stroke-opacity="${opacity}">${markups.join('')}</g>`,
 		),
 		...Array.from(fillGroups.entries()).map(
-			([opacity, markups]) => `<g fill="${escapeAttribute(ink)}" fill-opacity="${opacity}">${markups.join('')}</g>`,
+			([opacity, markups]) =>
+				`<g fill="${escapeAttribute(ink)}" fill-opacity="${opacity}">${markups.join('')}</g>`,
 		),
 	]
 

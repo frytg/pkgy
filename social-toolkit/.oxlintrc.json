@@ -1,0 +1,39 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "unicorn", "oxc", "import", "vue"],
+	"jsPlugins": ["oxlint-tailwindcss"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn"
+	},
+	"ignorePatterns": ["dist/**", "node_modules/**", "public/**", "input/**"],
+	"settings": {
+		"tailwindcss": {
+			"entryPoint": "src/style.css",
+			"attributes": ["class", "className"]
+		}
+	},
+	"rules": {
+		"tailwindcss/no-unknown-classes": [
+			"error",
+			{
+				"ignorePrefixes": ["ui-", "is-"]
+			}
+		],
+		"tailwindcss/no-duplicate-classes": "error",
+		"tailwindcss/no-conflicting-classes": "error",
+		"tailwindcss/no-deprecated-classes": "error",
+		"tailwindcss/no-unnecessary-whitespace": "error",
+		"tailwindcss/no-contradicting-variants": "warn",
+		"tailwindcss/enforce-canonical": "warn",
+		"tailwindcss/enforce-shorthand": "warn",
+		"tailwindcss/enforce-negative-arbitrary-values": "warn",
+		"tailwindcss/no-unnecessary-arbitrary-value": "warn",
+		"tailwindcss/no-hardcoded-colors": "off",
+		"tailwindcss/enforce-sort-order": "off",
+		"tailwindcss/no-dark-without-light": "off",
+		"tailwindcss/consistent-variant-order": "off",
+		"tailwindcss/enforce-consistent-important-position": "off",
+		"tailwindcss/enforce-consistent-variable-syntax": "off"
+	}
+}

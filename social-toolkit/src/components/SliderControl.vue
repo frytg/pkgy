@@ -23,8 +23,8 @@ defineEmits<{
 			:step="step ?? 0.01"
 			:value="modelValue"
 			@input="$emit('update:modelValue', Number(($event.target as HTMLInputElement).value))"
-		>
-		<span class="text-right font-mono text-[11px] tabular-nums text-[var(--faint)]">
+		/>
+		<span class="text-right font-mono text-[11px] text-[var(--faint)] tabular-nums">
 			{{ format ? format(modelValue) : modelValue }}
 		</span>
 	</label>

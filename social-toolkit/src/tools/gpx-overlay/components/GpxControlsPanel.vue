@@ -186,18 +186,24 @@ const decimal =
 						@change="$emit('update:exportScale', ($event.target as HTMLSelectElement).value)"
 					>
 						<option v-for="option in EXPORT_SCALE_OPTIONS" :key="option.value" :value="option.value">
-							{{ option.longEdge ? `${option.label} · ${option.longEdge} long edge` : `${option.label} · auto` }}
+							{{
+								option.longEdge
+									? `${option.label} · ${option.longEdge} long edge`
+									: `${option.label} · auto`
+							}}
 						</option>
 					</select>
 				</label>
-				<p class="font-mono text-[11px] tabular-nums text-[var(--faint)]">{{ exportSizeLabel }}</p>
+				<p class="font-mono text-[11px] text-[var(--faint)] tabular-nums">{{ exportSizeLabel }}</p>
 			</section>
 		</div>
 
 		<div
 			class="space-y-2 border-t border-[var(--line)] px-4 pt-4 pb-[max(1.25rem,var(--safe-bottom))] sm:px-5 sm:pb-5"
 		>
-			<button type="button" class="ui-btn ui-btn-primary w-full" @click="$emit('downloadPng')">Download PNG</button>
+			<button type="button" class="ui-btn ui-btn-primary w-full" @click="$emit('downloadPng')">
+				Download PNG
+			</button>
 			<button type="button" class="ui-btn w-full" @click="$emit('downloadSvg')">Download SVG</button>
 			<button type="button" class="ui-btn-ghost w-full" @click="$emit('copyPng')">Copy PNG</button>
 			<button type="button" class="ui-btn-ghost w-full" @click="$emit('copySvg')">Copy SVG</button>

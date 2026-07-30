@@ -16,18 +16,21 @@ const activeTool = computed(() => getFleetTool(activeToolId.value))
 				<p class="text-[11px] font-medium tracking-[0.12em] text-[var(--faint)] uppercase">FRYTG socials</p>
 				<p class="truncate text-[13px] text-primary/90">{{ activeTool.label }}</p>
 				<p class="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 text-[11px] text-[var(--faint)]">
-					<a class="ui-link" href="https://www.frytg.digital" target="_blank" rel="noopener noreferrer">www.frytg.digital</a>
+					<a class="ui-link" href="https://www.frytg.digital" target="_blank" rel="noopener noreferrer"
+						>www.frytg.digital</a
+					>
 					<a
 						class="ui-link"
 						href="https://github.com/frytg/pkgy/tree/main/social-toolkit"
 						target="_blank"
 						rel="noopener noreferrer"
-					>repo</a>
+						>repo</a
+					>
 				</p>
 			</div>
 
 			<nav
-				class="-mx-3 flex gap-1 overflow-x-auto px-3 pb-0.5 [scrollbar-width:none] sm:mx-0 sm:ml-auto sm:flex-wrap sm:justify-end sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
+				class="-mx-3 flex [scrollbar-width:none] gap-1 overflow-x-auto px-3 pb-0.5 sm:mx-0 sm:ml-auto sm:flex-wrap sm:justify-end sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
 				aria-label="Tools"
 			>
 				<button

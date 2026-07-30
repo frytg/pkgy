@@ -264,9 +264,13 @@ const onDrop = async (event: DragEvent): Promise<void> => {
 
 let resizeObserver: ResizeObserver | null = null
 
-watch([track, settings, exportScale], () => {
-	requestAnimationFrame(paintPreview)
-}, { deep: true })
+watch(
+	[track, settings, exportScale],
+	() => {
+		requestAnimationFrame(paintPreview)
+	},
+	{ deep: true },
+)
 
 onMounted(async () => {
 	await loadDemo()
@@ -314,7 +318,7 @@ onUnmounted(() => {
 
 		<section
 			class="relative flex min-w-0 flex-1 items-center justify-center overflow-hidden"
-			:class="{ 'outline outline-1 outline-yellow outline-offset-[-1px]': dragOver }"
+			:class="{ 'outline outline-1 outline-offset-[-1px] outline-yellow': dragOver }"
 			@dragover="onDragOver"
 			@dragleave="onDragLeave"
 			@drop="onDrop"
@@ -358,6 +362,12 @@ onUnmounted(() => {
 			</button>
 		</section>
 
-		<input ref="fileInputRef" type="file" class="hidden" accept=".gpx,application/gpx+xml,text/xml" @change="onFileInput">
+		<input
+			ref="fileInputRef"
+			type="file"
+			class="hidden"
+			accept=".gpx,application/gpx+xml,text/xml"
+			@change="onFileInput"
+		/>
 	</div>
 </template>

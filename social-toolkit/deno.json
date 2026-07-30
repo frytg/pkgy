@@ -4,7 +4,7 @@
 		"dev": "npm run dev",
 		"build": "deno task fonts && vite build",
 		"preview": "npm run preview",
-		"lint": "npx vue-tsc -b --pretty false"
+		"lint": "npx vue-tsc -b --pretty false && npx oxlint . && npx oxfmt --check ."
 	},
 	"deploy": {
 		"app": "social-toolkit",
