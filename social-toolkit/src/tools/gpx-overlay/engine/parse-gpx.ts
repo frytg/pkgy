@@ -41,8 +41,7 @@ export const haversineMeters = (a: Pick<GpxPoint, 'lat' | 'lon'>, b: Pick<GpxPoi
 	const dLon = toRadians(b.lon - a.lon)
 	const lat1 = toRadians(a.lat)
 	const lat2 = toRadians(b.lat)
-	const h =
-		Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2
+	const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2
 	return 2 * EARTH_RADIUS_M * Math.asin(Math.min(1, Math.sqrt(h)))
 }
 
@@ -101,12 +100,7 @@ const parseTrackPoint = (node: Element): GpxPoint | null => {
 		lon,
 		ele: readNumber(node, ['ele']),
 		time: readText(node, ['time']),
-		hr: readNumber(node, [
-			'gpxtpx\\:hr',
-			'ns3\\:hr',
-			'hr',
-			'*|hr',
-		]),
+		hr: readNumber(node, ['gpxtpx\\:hr', 'ns3\\:hr', 'hr', '*|hr']),
 	}
 }
 
@@ -140,14 +134,7 @@ const summarizePoints = (
 	points: GpxPoint[],
 ): Pick<
 	GpxTrack,
-	| 'distanceMeters'
-	| 'elevationGainMeters'
-	| 'hasElevation'
-	| 'hasHeartRate'
-	| 'minEle'
-	| 'maxEle'
-	| 'minHr'
-	| 'maxHr'
+	'distanceMeters' | 'elevationGainMeters' | 'hasElevation' | 'hasHeartRate' | 'minEle' | 'maxEle' | 'minHr' | 'maxHr'
 > => {
 	let distanceMeters = 0
 	let elevationGainMeters = 0
@@ -221,8 +208,7 @@ export const parseGpx = (xmlText: string, fallbackName = 'activity'): GpxTrack =
 
 	backfillHeartRateFromExtensions(points, sourcePoints)
 
-	const name =
-		readText(document.documentElement, ['trk > name', 'metadata > name', 'name']) ?? fallbackName
+	const name = readText(document.documentElement, ['trk > name', 'metadata > name', 'name']) ?? fallbackName
 
 	return {
 		name,

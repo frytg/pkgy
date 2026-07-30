@@ -71,15 +71,11 @@ export const buildOverlayLayout = (
 	if (!showTrack) {
 		const chartHeight = chartCount > 0 ? (innerHeight - (chartCount - 1) * 16) / chartCount : 0
 		let y = pad
-		const elevationRect = showElevation
-			? { x: pad, y, width: innerWidth, height: chartHeight }
-			: null
+		const elevationRect = showElevation ? { x: pad, y, width: innerWidth, height: chartHeight } : null
 		if (showElevation) {
 			y += chartHeight + 16
 		}
-		const heartRateRect = showHeartRate
-			? { x: pad, y, width: innerWidth, height: chartHeight }
-			: null
+		const heartRateRect = showHeartRate ? { x: pad, y, width: innerWidth, height: chartHeight } : null
 		return { width, height, trackRect: null, elevationRect, heartRateRect }
 	}
 
@@ -99,15 +95,11 @@ export const buildOverlayLayout = (
 	const chartHeight = (chartsBand - (chartCount - 1) * gap) / chartCount
 
 	let chartY = pad + trackHeight + gap
-	const elevationRect = showElevation
-		? { x: pad, y: chartY, width: innerWidth, height: chartHeight }
-		: null
+	const elevationRect = showElevation ? { x: pad, y: chartY, width: innerWidth, height: chartHeight } : null
 	if (showElevation) {
 		chartY += chartHeight + gap
 	}
-	const heartRateRect = showHeartRate
-		? { x: pad, y: chartY, width: innerWidth, height: chartHeight }
-		: null
+	const heartRateRect = showHeartRate ? { x: pad, y: chartY, width: innerWidth, height: chartHeight } : null
 
 	return {
 		width,
@@ -250,17 +242,17 @@ export const polylinePath = (pixels: PixelPoint[]): string => {
 /**
  * Samples a numeric series along cumulative distance for charting.
  * @param track - Parsed track
- * @param valueOf - Value accessor (skips nulls via interpolation gap breaks)
+ * @param readValue - Value accessor (skips nulls via interpolation gap breaks)
  * @returns Distance/value pairs ready for plotting
  */
 export const seriesAlongDistance = (
 	track: GpxTrack,
-	valueOf: (point: GpxPoint) => number | null,
+	readValue: (point: GpxPoint) => number | null,
 ): Array<{ distance: number; value: number }> => {
 	const distances = cumulativeDistances(track.points)
 	const series: Array<{ distance: number; value: number }> = []
 	for (let index = 0; index < track.points.length; index += 1) {
-		const value = valueOf(track.points[index])
+		const value = readValue(track.points[index])
 		if (value === null) {
 			continue
 		}

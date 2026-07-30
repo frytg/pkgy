@@ -159,7 +159,7 @@ const buildCellMarkup = ({
 		return {
 			bounds,
 			markup: wrapRotate(
-				`<path d="${commands.join(' ')}" fill="none" stroke-width="${formatNumber(stroke)}" stroke-linecap="round" />`
+				`<path d="${commands.join(' ')}" fill="none" stroke-width="${formatNumber(stroke)}" stroke-linecap="round" />`,
 			),
 		}
 	}
@@ -193,7 +193,7 @@ const buildCellMarkup = ({
 				maxY: Math.ceil(cy + half),
 			},
 			markup: wrapRotate(
-				`<rect x="${formatNumber(cx - half)}" y="${formatNumber(cy - half)}" width="${formatNumber(half * 2)}" height="${formatNumber(half * 2)}" />`
+				`<rect x="${formatNumber(cx - half)}" y="${formatNumber(cy - half)}" width="${formatNumber(half * 2)}" height="${formatNumber(half * 2)}" />`,
 			),
 		}
 	}
@@ -300,10 +300,11 @@ export const generateImageHalftoneSvg = ({
 				tone = 1 - tone
 			}
 
-			let amount = Math.max(
-				clamp(tone + (localPower + (hash21(column, row) - 0.5) * 2 * clamp(settings.randomness, 0, 1)) * 0.33, 0, 1),
-				settings.minimumTone,
-			) * 0.92
+			const amount =
+				Math.max(
+					clamp(tone + (localPower + (hash21(column, row) - 0.5) * 2 * clamp(settings.randomness, 0, 1)) * 0.33, 0, 1),
+					settings.minimumTone,
+				) * 0.92
 			const strokeWidth = localWidth
 			const cx = (column + 0.5) * cellSize
 			const cy = (row + 0.5) * cellSize
@@ -343,10 +344,10 @@ export const generateImageHalftoneSvg = ({
 	const layers = [
 		...Array.from(strokeGroups.entries()).map(
 			([opacity, markups]) =>
-				`<g fill="none" stroke="${escapeAttribute(ink)}" stroke-opacity="${opacity}">${markups.join('')}</g>`
+				`<g fill="none" stroke="${escapeAttribute(ink)}" stroke-opacity="${opacity}">${markups.join('')}</g>`,
 		),
 		...Array.from(fillGroups.entries()).map(
-			([opacity, markups]) => `<g fill="${escapeAttribute(ink)}" fill-opacity="${opacity}">${markups.join('')}</g>`
+			([opacity, markups]) => `<g fill="${escapeAttribute(ink)}" fill-opacity="${opacity}">${markups.join('')}</g>`,
 		),
 	]
 

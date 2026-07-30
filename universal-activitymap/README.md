@@ -2,6 +2,10 @@
 
 Hono server that renders activity charts as SVGs — like [githubchart-rust](../githubchart-rust/), but in TypeScript and extensible to multiple activity providers.
 
+- site: [www.frytg.digital](https://www.frytg.digital)
+- live: [universal-activitymap.frytg.deno.net](https://universal-activitymap.frytg.deno.net)
+- repo: [tangled.org/frytg.digital/pkgy](https://tangled.org/frytg.digital/pkgy) (mirror: [github.com/frytg/pkgy](https://github.com/frytg/pkgy/tree/main/universal-activitymap))
+
 ## Usage
 
 Toolchain is pinned in [`mise.toml`](./mise.toml) (node + [aube](https://aube.jdx.dev)); `just install` provisions both via mise and installs dependencies into `aube-lock.yaml`.

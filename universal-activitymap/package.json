@@ -3,6 +3,12 @@
 	"private": true,
 	"version": "0.1.0",
 	"type": "module",
+	"homepage": "https://www.frytg.digital",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/frytg/pkgy.git",
+		"directory": "universal-activitymap"
+	},
 	"dependencies": {
 		"@hono/node-server": "^2.0.10",
 		"hono": "^4.12.5",

@@ -3,6 +3,12 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
+	"homepage": "https://www.frytg.digital",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/frytg/pkgy.git",
+		"directory": "social-toolkit"
+	},
 	"scripts": {
 		"dev": "vite",
 		"build": "vue-tsc -b && vite build",
@@ -13,6 +19,7 @@
 		"vue": "^3.5.39"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "2.5.6",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^24.13.2",
 		"@types/three": "^0.185.1",

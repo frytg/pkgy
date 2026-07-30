@@ -3,6 +3,11 @@
 _default:
 	just --list
 
+# provision pinned tools (node, aube) and install dependencies
+install:
+	mise install
+	aube install
+
 fonts:
 	deno task fonts
 
@@ -18,6 +23,7 @@ preview:
 
 lint:
 	aubx vue-tsc -b --pretty false
+	aubr biome check .
 
 deploy:
 	deno deploy

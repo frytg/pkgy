@@ -17,7 +17,8 @@ Either run the build scripts yourself or use the packages from GitHub registry. 
 See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy](https://github.com/users/frytg/packages?repo_name=pkgy)
 
 - [`g3-http-proxy`](./g3-http-proxy/) - standalone container image with http forward proxy
-- [`universal-activitymap`](./universal-activitymap/) - hono server rendering activity charts (github, ...) as SVGs
+- [`universal-activitymap`](./universal-activitymap/) - hono server rendering activity charts (github, ...) as SVGs — live at [universal-activitymap.frytg.deno.net](https://universal-activitymap.frytg.deno.net)
+- [`social-toolkit`](./social-toolkit/) - dark-mode tools for social image overlays (halftone, gpx) — live at [social-toolkit.frytg.deno.net](https://social-toolkit.frytg.deno.net)
 
 ### curl and kubectl
 

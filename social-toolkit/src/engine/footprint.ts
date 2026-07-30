@@ -120,8 +120,7 @@ export const getImageFootprintScale = ({
 	const currentArea = currentRect ? currentRect.width * currentRect.height : 0
 	const referenceArea = referenceRect ? referenceRect.width * referenceRect.height : 0
 
-	const zoomScale =
-		currentArea > 0 && referenceArea > 0 ? Math.sqrt(currentArea / referenceArea) : 1
+	const zoomScale = currentArea > 0 && referenceArea > 0 ? Math.sqrt(currentArea / referenceArea) : 1
 
 	// Preview always renders at virtualRenderHeightPx; export must grow cell px with height
 	// so the same Density slider yields the same motif count, not finer detail.

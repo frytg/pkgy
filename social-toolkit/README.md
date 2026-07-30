@@ -2,6 +2,10 @@
 
 Dark-mode tools for social image overlays. Geist type, forest-green field, electric yellow interaction.
 
+- site: [www.frytg.digital](https://www.frytg.digital)
+- live: [social-toolkit.frytg.deno.net](https://social-toolkit.frytg.deno.net)
+- repo: [tangled.org/frytg.digital/pkgy](https://tangled.org/frytg.digital/pkgy) (mirror: [github.com/frytg/pkgy](https://github.com/frytg/pkgy/tree/main/social-toolkit))
+
 ## Tools
 
 - **Halftone** — upload an image, tune motif density/shape, export PNG/SVG
@@ -9,9 +13,13 @@ Dark-mode tools for social image overlays. Geist type, forest-green field, elect
 
 ## Run
 
+Toolchain is pinned in [`mise.toml`](./mise.toml) (node + [aube](https://aube.jdx.dev)); `just install` provisions both via mise and installs npm deps. Lint is `vue-tsc` + [biome](https://biomejs.dev) (root [`biome.json`](../biome.json)).
+
 ```bash
+just install
 just fonts   # once — downloads Geist woff2 into src/style/
 just dev
+just lint
 ```
 
 Or `deno task fonts && npm run dev`.
