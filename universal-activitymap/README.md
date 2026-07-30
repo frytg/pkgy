@@ -8,11 +8,13 @@ Hono server that renders activity charts as SVGs — like [githubchart-rust](../
 
 ## Usage
 
-Toolchain is pinned in [`mise.toml`](./mise.toml) (node + [aube](https://aube.jdx.dev)); `just install` provisions both via mise and installs dependencies into `aube-lock.yaml`.
+Toolchain is pinned in [`mise.toml`](./mise.toml) (node + [aube](https://aube.jdx.dev)); `just install` provisions both via mise and installs dependencies into `aube-lock.yaml`. Lint/format is [Oxc](https://oxc.rs): `tsc` + [oxlint](https://oxc.rs/docs/guide/usage/linter.html) + [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html). Config: [`.oxlintrc.json`](./.oxlintrc.json), [`.oxfmtrc.json`](./.oxfmtrc.json).
 
 ```sh
 just install
 just dev
+just lint
+just fmt
 ```
 
 Then request a chart:
@@ -23,10 +25,10 @@ GET /:provider/:username/:theme?
 
 - `:provider` — one of `github`, `tangled`, `mastodon`, `bluesky`
 - `:username` — provider-specific identifier:
-  - `github`: login, e.g. `frytg`
-  - `tangled`: handle or DID, e.g. `frytg.digital`
-  - `mastodon`: full handle in `user@host` form, e.g. `frytg@beoriginal.social`
-  - `bluesky`: handle, e.g. `frytg.digital`
+    - `github`: login, e.g. `frytg`
+    - `tangled`: handle or DID, e.g. `frytg.digital`
+    - `mastodon`: full handle in `user@host` form, e.g. `frytg@beoriginal.social`
+    - `bluesky`: handle, e.g. `frytg.digital`
 - `:theme` — optional path segment, one of `default` (fallback), `default-auto`, `dark`, `bluesky`, `bluesky-auto`, `mastodon`, `mastodon-auto`. The `-auto` variants flip to a dark palette via a `prefers-color-scheme` media query, so a single URL follows the viewer's system setting.
 
 ```sh
@@ -113,7 +115,7 @@ Deploy options:
 
 ## Tasks
 
-See the [justfile](./justfile): `just dev`, `just start`, `just lint`, `just test`.
+See the [justfile](./justfile): `just dev`, `just start`, `just lint`, `just fmt`, `just test`.
 
 ## License
 

@@ -28,10 +28,16 @@ deno-check:
 deploy:
 	deno deploy
 
-# typecheck and lint
+# typecheck, lint, and check formatting
 lint:
 	aubr tsc --noEmit
-	aubr biome check .
+	aubx oxlint .
+	aubx oxfmt --check .
+
+# write formatting fixes
+fmt:
+	aubx oxfmt .
+alias format := fmt
 
 # run unit tests (offline)
 test:

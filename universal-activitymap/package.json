@@ -1,13 +1,16 @@
 {
 	"name": "universal-activitymap",
-	"private": true,
 	"version": "0.1.0",
-	"type": "module",
 	"homepage": "https://www.frytg.digital",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/frytg/pkgy.git",
 		"directory": "universal-activitymap"
+	},
+	"type": "module",
+	"scripts": {
+		"lint": "tsc --noEmit && oxlint . && oxfmt --check .",
+		"fmt": "oxfmt ."
 	},
 	"dependencies": {
 		"@hono/node-server": "^2.0.10",
@@ -16,8 +19,9 @@
 		"undici": "^7.24.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
 		"@types/node": "^24.13.2",
+		"oxfmt": "0.61.0",
+		"oxlint": "1.76.0",
 		"typescript": "~6.0.2"
 	}
 }

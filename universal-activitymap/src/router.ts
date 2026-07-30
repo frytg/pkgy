@@ -39,7 +39,10 @@ export const createProviderRouter = (provider: ActivityProvider): Hono => {
 		if (weeksQuery !== undefined) {
 			const parsed = Number.parseInt(weeksQuery, 10)
 			if (!Number.isInteger(parsed) || parsed < 1 || parsed > MAX_WEEKS) {
-				return c.json({ error: `weeks must be an integer between 1 and ${MAX_WEEKS}, got '${weeksQuery}'` }, 400)
+				return c.json(
+					{ error: `weeks must be an integer between 1 and ${MAX_WEEKS}, got '${weeksQuery}'` },
+					400,
+				)
 			}
 			weeks = parsed
 		}
