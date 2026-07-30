@@ -1,0 +1,27 @@
+set export
+
+config := "monitor-frame.yaml"
+
+_default:
+	just --list
+
+# validate config (needs secrets.yaml)
+config:
+	esphome config {{ config }}
+
+# compile firmware
+build:
+	esphome compile {{ config }}
+
+# flash over USB (hold reset if port not found)
+run:
+	esphome run {{ config }}
+alias flash := run
+
+# serial logs only
+logs:
+	esphome logs {{ config }}
+
+# clean build dir
+clean:
+	rm -rf .esphome

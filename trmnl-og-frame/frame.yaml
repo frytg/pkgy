@@ -1,0 +1,171 @@
+# TRMNL OG 7.5″ (official usetrmnl.com hardware) — live frame client
+#
+# Pinout / board from jesserockz/esphome-trmnl (ESP32-C3 OG):
+#   SPI clk=7 mosi=8 · CS=6 DC=5 RST=10 BUSY=4 (busy inverted)
+#   Button GPIO9 · battery ADC GPIO3 ×2
+#
+# ESP32-C3 has NO PSRAM. A full 800×480 BINARY buffer is 48KB contiguous.
+# Keep this config lean (no web_server / captive_portal) and use BMP, not PNG,
+# so decoding does not need a second giant buffer. Official TRMNL ESPHome also
+# uses online_image format: bmp for this reason.
+#
+# Expected endpoint:
+#   GET /ext-api/e-ink/frame.bmp  — always-fresh 1-bit rooms frame
+# or
+#   GET /ext-api/e-ink-monitor/frame.bmp if you add a monitor BMP path later
+#
+# Flash (official OG): power off → USB-C → hold BOOT → power on → release BOOT → just run
+
+substitutions:
+  device_name: trmnl-og-frame
+  friendly_name: TRMNL OG Frame
+  frame_base_url: "http://10.0.17.17:8080"
+  # BMP is mandatory on C3 — PNG online_image commonly OOMs at 48KB framebuffer alloc
+  frame_path: "/ext-api/e-ink/frame.bmp"
+  run_duration: "120s"
+  sleep_duration: "20min"
+  panel_refresh_wait: "25s"
+  ap_password: "trmnlframe"
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  min_version: 2025.10.0
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+  variant: esp32c3
+
+logger:
+  level: INFO
+  logs:
+    online_image: INFO
+    http_request: INFO
+    waveshare_epaper: INFO
+
+# Wireless OTA only (no web_server — that alone can leave <48KB free on C3).
+# First flash is USB BOOT; later OTA while still in run_duration.
+ota:
+  - platform: esphome
+    # password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  min_auth_mode: WPA2
+  fast_connect: true
+  power_save_mode: LIGHT
+  on_connect:
+    - logger.log: "wifi up — pulling frame"
+    # let wifi/http settle so heap is less fragmented before 48KB alloc
+    - delay: 500ms
+    - script.execute: pull_frame
+  on_disconnect:
+    - logger.log: "wifi down"
+  ap:
+    ssid: "${device_name}-ap"
+    password: ${ap_password}
+
+# no captive_portal — saves heap for the 48KB image buffer
+
+sensor:
+  - platform: adc
+    pin: GPIO3
+    name: "Battery Voltage"
+    id: battery_voltage
+    attenuation: 12db
+    samples: 16
+    update_interval: never
+
+binary_sensor:
+  - platform: gpio
+    id: btn_refresh
+    name: "Refresh Button"
+    pin:
+      number: GPIO9
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    filters:
+      - delayed_on: 20ms
+    on_press:
+      then:
+        - logger.log: "button: refresh frame"
+        - script.execute: pull_frame
+
+# Timer wake only (C3 deep-sleep pin wake = GPIO0–5; button is GPIO9)
+deep_sleep:
+  id: deep_sleep_1
+  run_duration: ${run_duration}
+  sleep_duration: ${sleep_duration}
+
+spi:
+  clk_pin: GPIO7
+  mosi_pin: GPIO8
+
+http_request:
+  useragent: "trmnl-og-frame/0.1"
+  timeout: 90s
+  watchdog_timeout: 120s
+  verify_ssl: false
+  # keep TCP buffers small on C3
+  buffer_size_rx: 2048
+  buffer_size_tx: 1024
+
+image:
+  - platform: online_image
+    id: remote_frame
+    # BMP decoder is much lighter than PNG on internal RAM
+    format: BMP
+    type: BINARY
+    resize: 800x480
+    url: "${frame_base_url}${frame_path}"
+    update_interval: never
+    on_download_finished:
+      then:
+        - logger.log: "frame downloaded — refreshing panel"
+        - script.execute: show_and_sleep
+    on_error:
+      then:
+        - logger.log:
+            level: ERROR
+            format: "frame download failed — sleeping shortly"
+        - delay: 15s
+        - deep_sleep.enter: deep_sleep_1
+
+display:
+  - platform: waveshare_epaper
+    id: epaper_display
+    model: 7.50inv2
+    cs_pin: GPIO6
+    dc_pin: GPIO5
+    reset_pin: GPIO10
+    busy_pin:
+      number: GPIO4
+      inverted: true
+    update_interval: never
+    lambda: |-
+      it.fill(COLOR_OFF);
+      // COLOR_OFF / COLOR_ON args: swap if polarity is inverted
+      it.image(0, 0, id(remote_frame), COLOR_OFF, COLOR_ON);
+
+script:
+  - id: pull_frame
+    mode: restart
+    then:
+      - logger.log: "pull frame bmp (server may take ~5–10s)"
+      - online_image.set_url:
+          id: remote_frame
+          url: "${frame_base_url}${frame_path}"
+
+  - id: show_and_sleep
+    mode: single
+    then:
+      - component.update: epaper_display
+      - logger.log: "panel update kicked — waiting for refresh"
+      - delay: ${panel_refresh_wait}
+      - logger.log: "entering deep sleep"
+      - deep_sleep.enter: deep_sleep_1

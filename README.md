@@ -21,6 +21,8 @@ See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy
 - [`social-toolkit`](./social-toolkit/) - dark-mode tools for social image overlays (halftone, gpx) — live at [social-toolkit.frytg.deno.net](https://social-toolkit.frytg.deno.net)
 - [`m5stack-coreink-openrouter`](./m5stack-coreink-openrouter/) - CoreInk firmware: OpenRouter activity JSON → 1-bit e-ink
 - [`reterminal-e1002-discogs`](./reterminal-e1002-discogs/) - E1002 ESPHome client: pulls a Discogs album `frame.png` onto Spectra 6
+- [`reterminal-e1001-monitor`](./reterminal-e1001-monitor/) - E1001 ESPHome client: pulls e-ink monitor `frame.png` (OpenRouter + Cursor) onto B&W panel
+- [`trmnl-og-frame`](./trmnl-og-frame/) - official TRMNL OG 7.5″ (ESP32-C3) ESPHome client: live PNG frame (long HTTP timeout; no Alias)
 
 ### curl and kubectl
 
