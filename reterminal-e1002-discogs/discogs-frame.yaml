@@ -1,0 +1,221 @@
+# reTerminal E1002 — Discogs album frame
+#
+# Pulls an 800×480 Spectra-6 PNG from your backend and paints full-screen.
+# Device does no layout: the server composes the frame (Discogs + render).
+#
+# Expected endpoint on frame_base_url:
+#   GET /ext-api/discogs/frame.png  — always a fresh screenshot (~5–6s)
+#
+# Cadence:
+#   deep sleep 6h  →  wake  →  GET frame.png  →  refresh panel  →  sleep
+#   green button   →  wake  →  GET frame.png  →  sleep  (same URL; backend is always new)
+#
+# Sleep model (important):
+#   Do NOT deep_sleep.enter from on_download_finished right after component.update.
+#   epaper refresh is slow/async; entering sleep mid-refresh blanks the cycle.
+#   Pattern: on_download only paints; run_duration is the deadman that sleeps
+#   after enough wall time for panel refresh. Safety script also sleeps after
+#   an explicit post-refresh delay if still awake.
+#
+# Fill secrets.yaml first. Set frame_base_url. Flash with: just run
+
+substitutions:
+  device_name: reterminal-discogs
+  friendly_name: Discogs Frame
+  # backend origin the device can reach (LAN/VPN). no trailing slash.
+  frame_base_url: "http://10.0.17.17:8080"
+  # how long to stay awake after boot (download ~6s + panel refresh headroom)
+  run_duration: "120s"
+  # how long to sleep between automatic wakes
+  sleep_duration: "6h"
+  # wait after kicking the panel before an explicit sleep enter
+  panel_refresh_wait: "50s"
+  ap_password: "discogsframe"
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  min_version: 2025.10.0
+  on_boot:
+    - priority: 600
+      then:
+        - output.turn_on: bsp_battery_enable
+        - delay: 200ms
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+  flash_size: 16MB
+  variant: esp32s3
+
+# 800×480 RGB needs PSRAM; E1002 has 8MB octal
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
+  hardware_uart: UART0
+  level: INFO
+  logs:
+    # component levels must be >= global level severity
+    online_image: INFO
+    http_request: INFO
+    epaper_spi: INFO
+
+# Optional Home Assistant — uncomment if used
+# api:
+#   encryption:
+#     key: !secret api_key
+
+# ota:
+#   - platform: esphome
+#     password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  min_auth_mode: WPA2
+  fast_connect: true
+  on_connect:
+    - logger.log: "wifi up — pulling frame"
+    # pull after Wi‑Fi is actually up (on_boot is too early / races join)
+    - script.execute: pull_frame
+  on_disconnect:
+    - logger.log: "wifi down"
+  ap:
+    ssid: "${device_name}-ap"
+    password: ${ap_password}
+
+captive_portal:
+
+# -----------------------------------------------------------------------------
+# Power / sleep
+# -----------------------------------------------------------------------------
+
+output:
+  # VBAT enable — GPIO21 per Seeed BSP / community configs (GPIO6 is status LED)
+  - platform: gpio
+    pin: GPIO21
+    id: bsp_battery_enable
+
+sensor:
+  - platform: adc
+    pin: GPIO1
+    name: "Battery Voltage"
+    id: battery_voltage
+    attenuation: 12db
+    update_interval: 60s
+    filters:
+      - multiply: 2.0
+
+# Green refresh button — also deep-sleep wake (INVERT_WAKEUP, active low)
+binary_sensor:
+  - platform: gpio
+    id: btn_refresh
+    name: "Refresh Button"
+    pin:
+      number: GPIO3
+      allow_other_uses: true
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    filters:
+      - delayed_on: 20ms
+    on_press:
+      then:
+        - logger.log: "button: new album"
+        - script.execute: pull_frame
+
+button:
+  - platform: template
+    name: "Refresh Frame"
+    icon: mdi:album
+    on_press:
+      - script.execute: pull_frame
+
+deep_sleep:
+  id: deep_sleep_1
+  # deadman: auto-sleep even if the post-refresh script never runs
+  run_duration: ${run_duration}
+  sleep_duration: ${sleep_duration}
+  wakeup_pin:
+    number: GPIO3
+    allow_other_uses: true
+    mode:
+      input: true
+      pullup: true
+  wakeup_pin_mode: INVERT_WAKEUP
+
+# -----------------------------------------------------------------------------
+# Display path: HTTP PNG → paint → sleep
+# -----------------------------------------------------------------------------
+
+spi:
+  clk_pin: GPIO7
+  mosi_pin: GPIO9
+
+http_request:
+  useragent: "reterminal-e1002-discogs/0.1"
+  timeout: 90s
+  # backend always renders (~5–6s typical); leave headroom for cold gowitness
+  watchdog_timeout: 120s
+  verify_ssl: false
+
+image:
+  - platform: online_image
+    id: discogs_frame
+    format: PNG
+    type: RGB
+    resize: 800x480
+    buffer_size: 65536
+    url: "${frame_base_url}/ext-api/discogs/frame.png"
+    update_interval: never
+    on_download_finished:
+      then:
+        - logger.log: "frame downloaded — refreshing panel"
+        # only paint here; sleep is handled by show_and_sleep / run_duration
+        - script.execute: show_and_sleep
+    on_error:
+      then:
+        - logger.log:
+            level: ERROR
+            format: "frame download failed — sleeping shortly"
+        - delay: 15s
+        - deep_sleep.enter: deep_sleep_1
+
+display:
+  - platform: epaper_spi
+    id: epaper_display
+    # board model fixes CS=10 DC=11 RESET=12 BUSY=13 for E1002
+    model: Seeed-reTerminal-E1002
+    update_interval: never
+    lambda: |-
+      it.fill(Color(255, 255, 255));
+      it.image(0, 0, id(discogs_frame));
+
+# -----------------------------------------------------------------------------
+# Scripts
+# -----------------------------------------------------------------------------
+
+script:
+  # set_url auto-triggers download (update defaults to true)
+  - id: pull_frame
+    mode: restart
+    then:
+      - logger.log: "pull frame (always fresh on server)"
+      - online_image.set_url:
+          id: discogs_frame
+          url: "${frame_base_url}/ext-api/discogs/frame.png"
+
+  # Kick panel, then wait for the slow Spectra full refresh before sleep.
+  # mode: single prevents double-enter if download fires twice.
+  - id: show_and_sleep
+    mode: single
+    then:
+      - component.update: epaper_display
+      - logger.log: "panel update kicked — waiting for refresh"
+      - delay: ${panel_refresh_wait}
+      - logger.log: "entering deep sleep"
+      - deep_sleep.enter: deep_sleep_1

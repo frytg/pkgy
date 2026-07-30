@@ -19,6 +19,8 @@ See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy
 - [`g3-http-proxy`](./g3-http-proxy/) - standalone container image with http forward proxy
 - [`universal-activitymap`](./universal-activitymap/) - hono server rendering activity charts (github, ...) as SVGs — live at [universal-activitymap.frytg.deno.net](https://universal-activitymap.frytg.deno.net)
 - [`social-toolkit`](./social-toolkit/) - dark-mode tools for social image overlays (halftone, gpx) — live at [social-toolkit.frytg.deno.net](https://social-toolkit.frytg.deno.net)
+- [`m5stack-coreink-openrouter`](./m5stack-coreink-openrouter/) - CoreInk firmware: OpenRouter activity JSON → 1-bit e-ink
+- [`reterminal-e1002-discogs`](./reterminal-e1002-discogs/) - E1002 ESPHome client: pulls a Discogs album `frame.png` onto Spectra 6
 
 ### curl and kubectl
 
