@@ -13,9 +13,9 @@ RUN apk add --no-cache ca-certificates libgcc c-ares
 
 # copy pre-compiled binary into alpine image
 ARG PROXY_CONFIG_FILE
-COPY ./${PROXY_CONFIG_FILE} /etc/g3proxy.yml
-COPY ./g3proxy /usr/bin/g3proxy
+COPY ./${PROXY_CONFIG_FILE} /etc/vey-proxy.yml
+COPY ./vey-proxy /usr/bin/vey-proxy
 
 # set entry
-ENTRYPOINT ["/usr/bin/g3proxy"]
-CMD ["--config-file", "/etc/g3proxy.yml"]
+ENTRYPOINT ["/usr/bin/vey-proxy"]
+CMD ["--config-file", "/etc/vey-proxy.yml"]

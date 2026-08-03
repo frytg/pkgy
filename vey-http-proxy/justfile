@@ -2,7 +2,7 @@ set export := true
 
 # set default versions
 alpine_version := "3.21"
-default_g3_version := "1.10.4"
+default_vey_version := "1.13.9"
 build_target := "${CARGO_BUILD_TARGET:-aarch64-apple-darwin}"
 
 # run `just` in the CLI to see the list of shortcuts
@@ -23,17 +23,17 @@ setup: verify
 	brew install pkgconf capnp c-ares openssl
 
 # build binary and docker image using a given version
-build version=default_g3_version: verify
+build version=default_vey_version: verify
 	@echo ""
-	@echo "Using G3 version {{version}}"
-	@echo "Veryfying existence of critical tools"
+	@echo "Using VEY version {{version}}"
+	@echo "Verifying existence of critical tools"
 	@echo ""
 
 	@echo "Clone from GIT {{version}}..."
-	-@rm -rf ./g3
-	-@rm -rf ./g3proxy
+	-@rm -rf ./vey
+	-@rm -rf ./vey-proxy
 	@git config --global advice.detachedHead false
-	@git clone --depth 1 --branch g3proxy-v{{version}} --quiet https://github.com/bytedance/g3.git
+	@git clone --depth 1 --branch vey-proxy-v{{version}} --quiet https://github.com/VEY-OSS/vey.git
 	@echo ""
 
 	@echo "Build with Rust for {{build_target}}..."
@@ -42,26 +42,26 @@ build version=default_g3_version: verify
 		--target {{build_target}} \
 		--profile release-lto \
 		--no-default-features \
-		--features quic,c-ares \
-		-p g3proxy \
-		--manifest-path g3/Cargo.toml
-	@mv ./g3/target/{{build_target}}/release-lto/g3proxy ./g3proxy
-	-@rm -rf g3
-	@./g3proxy --version
+		--features quic,c-ares,rustls-ring \
+		-p vey-proxy \
+		--manifest-path vey/Cargo.toml
+	@mv ./vey/target/{{build_target}}/release-lto/vey-proxy ./vey-proxy
+	-@rm -rf vey
+	@./vey-proxy --version
 
 	@docker build \
-		-t g3proxy:ipv4-only \
+		-t vey-proxy:ipv4-only \
 		--platform "linux/amd64" \
 		--build-arg ALPINE_VERSION={{alpine_version}} \
-		--build-arg PROXY_CONFIG_FILE=g3proxy.ipv4-only.yml .
-	-@echo "Image size IPv4: $(docker images g3proxy:ipv4-only --format json | jq -r .Size)"
+		--build-arg PROXY_CONFIG_FILE=vey-proxy.ipv4-only.yml .
+	-@echo "Image size IPv4: $(docker images vey-proxy:ipv4-only --format json | jq -r .Size)"
 
 	@docker build \
-		-t g3proxy:ipv6-first \
+		-t vey-proxy:ipv6-first \
 		--platform "linux/amd64" \
 		--build-arg ALPINE_VERSION={{alpine_version}} \
-		--build-arg PROXY_CONFIG_FILE=g3proxy.ipv6-first.yml .
-	-@echo "Image size IPv6: $(docker images g3proxy:ipv6-first --format json | jq -r .Size)"
+		--build-arg PROXY_CONFIG_FILE=vey-proxy.ipv6-first.yml .
+	-@echo "Image size IPv6: $(docker images vey-proxy:ipv6-first --format json | jq -r .Size)"
 
 # list rustup targets
 targets:
@@ -69,7 +69,7 @@ targets:
 
 # remove files and docker images
 cleanup:
-	-rm -rf g3
+	-rm -rf vey
 	-docker rmi alpine
-	-docker rmi g3proxy
+	-docker rmi vey-proxy
 	-docker image prune -f

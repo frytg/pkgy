@@ -3,7 +3,7 @@ runtime:
 
 log: stdout
 
-# http_proxy docs: https://g3-project.readthedocs.io/projects/g3proxy/en/latest/configuration/servers/http_proxy.html
+# http_proxy docs: https://vey.readthedocs.io/projects/proxy/en/latest/configuration/servers/http_proxy.html
 server:
   - name: proxy
     type: http_proxy
@@ -11,7 +11,7 @@ server:
     listen:
       address: "[::]:3128"
 
-# c-ares docs: https://g3-project.readthedocs.io/projects/g3proxy/en/latest/configuration/resolvers/c_ares.html
+# c-ares docs: https://vey.readthedocs.io/projects/proxy/en/latest/configuration/resolvers/c_ares.html
 # default dns servers: https://joindns4.eu/for-public
 resolver:
   - name: dns
@@ -20,11 +20,11 @@ resolver:
       - "2a13:1001::86:54:11:100"
       - "86.54.11.100"
 
-# direct_fixed docs: https://g3-project.readthedocs.io/projects/g3proxy/en/latest/configuration/escapers/direct_fixed.html
+# direct_fixed docs: https://vey.readthedocs.io/projects/proxy/en/latest/configuration/escapers/direct_fixed.html
 escaper:
   - name: direct
     type: direct_fixed
     resolver: dns
-    resolve_strategy: Ipv6First
+    resolve_strategy: IPv6First
     egress_network_filter:
       default: allow
