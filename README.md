@@ -16,11 +16,11 @@ Either run the build scripts yourself or use the packages from GitHub registry. 
 
 See all published packages here: [github.com/users/frytg/packages?repo_name=pkgy](https://github.com/users/frytg/packages?repo_name=pkgy)
 
-- [`vey-http-proxy`](./vey-http-proxy/) - standalone container image with http forward proxy (`vey-proxy`, formerly g3-http-proxy / g3proxy)
-- [`universal-activitymap`](./universal-activitymap/) - hono server rendering activity charts (github, ...) as SVGs — live at [universal-activitymap.frytg.deno.net](https://universal-activitymap.frytg.deno.net)
-- [`social-toolkit`](./social-toolkit/) - dark-mode tools for social image overlays (halftone, gpx) — live at [social-toolkit.frytg.deno.net](https://social-toolkit.frytg.deno.net)
-- [`m5stack-coreink-openrouter`](./m5stack-coreink-openrouter/) - CoreInk firmware: OpenRouter activity JSON → 1-bit e-ink
 - [`esphome-eink`](./esphome-eink/) - ESPHome e-ink clients: TRMNL OG (`frame`), E1001 monitor, E1002 discogs — `just run {frame,monitor,discogs}`
+- [`m5stack-coreink-openrouter`](./m5stack-coreink-openrouter/) - CoreInk firmware: OpenRouter activity JSON → 1-bit e-ink
+- [`social-toolkit`](./social-toolkit/) - dark-mode tools for social image overlays (halftone, gpx) — live at [social-toolkit.frytg.deno.net](https://social-toolkit.frytg.deno.net)
+- [`universal-activitymap`](./universal-activitymap/) - hono server rendering activity charts (github, ...) as SVGs — live at [universal-activitymap.frytg.deno.net](https://universal-activitymap.frytg.deno.net)
+- [`vey-http-proxy`](./vey-http-proxy/) - standalone container image with http forward proxy (`vey-proxy`, formerly g3-http-proxy / g3proxy)
 
 ### curl and kubectl
 
