@@ -1,5 +1,6 @@
 import type { Component } from 'vue'
 
+import ElevationLinesTool from './elevation-lines/ElevationLinesTool.vue'
 import GpxOverlayTool from './gpx-overlay/GpxOverlayTool.vue'
 import GpxViewerTool from './gpx-viewer/GpxViewerTool.vue'
 import HalftoneTool from './halftone/HalftoneTool.vue'
@@ -31,6 +32,12 @@ export const FLEET_TOOLS: FleetTool[] = [
 		label: 'GPX Viewer',
 		blurb: 'Interactive map · profiles · zones · splits',
 		component: GpxViewerTool,
+	},
+	{
+		id: 'elevation-lines',
+		label: 'Elevation Lines',
+		blurb: 'Abstract topo contours · nested rings',
+		component: ElevationLinesTool,
 	},
 ]
 
