@@ -10,6 +10,7 @@ Dark-mode tools for social image overlays. Geist type, forest-green field, elect
 
 - **Halftone** — upload an image, tune motif density/shape, export PNG/SVG
 - **GPX Overlay** — drop a `.gpx`, toggle GPS track / elevation / heart rate, export transparent PNG or SVG
+- **Elevation Lines** — generative abstract topo contours; closed rings nest and wind like real elevation maps
 
 ## Run
 

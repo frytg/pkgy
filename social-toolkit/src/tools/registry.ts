@@ -1,5 +1,6 @@
 import type { Component } from 'vue'
 
+import ElevationLinesTool from './elevation-lines/ElevationLinesTool.vue'
 import GpxOverlayTool from './gpx-overlay/GpxOverlayTool.vue'
 import HalftoneTool from './halftone/HalftoneTool.vue'
 
@@ -24,6 +25,12 @@ export const FLEET_TOOLS: FleetTool[] = [
 		label: 'GPX Overlay',
 		blurb: 'Transparent track · elevation · heart rate',
 		component: GpxOverlayTool,
+	},
+	{
+		id: 'elevation-lines',
+		label: 'Elevation Lines',
+		blurb: 'Abstract topo contours · nested rings',
+		component: ElevationLinesTool,
 	},
 ]
 
