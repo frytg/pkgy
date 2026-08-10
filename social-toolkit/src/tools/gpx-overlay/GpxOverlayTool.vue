@@ -11,6 +11,7 @@ import {
 	resolveGpxExportSize,
 } from './engine/render-overlay.ts'
 import { DEFAULT_GPX_SETTINGS, type GpxOverlaySettings } from './engine/settings.ts'
+import PanelToggle from '../../components/PanelToggle.vue'
 import GpxControlsPanel from './components/GpxControlsPanel.vue'
 import { initialPanelOpen } from '../panel-state.ts'
 
@@ -288,32 +289,31 @@ onUnmounted(() => {
 
 <template>
 	<div class="relative flex h-full bg-mid-dark-greeny">
-		<button
-			v-if="panelOpen"
-			type="button"
-			class="ui-panel-backdrop md:hidden"
-			aria-label="Close controls"
-			@click="panelOpen = false"
-		/>
-
-		<aside
-			v-show="panelOpen"
-			class="ui-panel-shell absolute inset-y-0 left-0 max-w-full pl-[var(--safe-left)] md:static md:max-w-none md:shrink-0"
-		>
-			<GpxControlsPanel
-				v-model:settings="settings"
-				v-model:export-scale="exportScale"
-				:file-name="fileName"
-				:stats-line="statsLine"
-				:export-size-label="exportSizeLabel"
-				:track="track"
-				@upload="openFilePicker"
-				@reset="resetSettings"
-				@download-png="downloadPng"
-				@download-svg="downloadSvg"
-				@copy-png="copyPng"
-				@copy-svg="copySvg"
-			/>
+		<aside class="ui-panel-shell" :class="{ 'is-collapsed': !panelOpen }">
+			<div class="ui-panel-toggle-row">
+				<PanelToggle
+					:open="panelOpen"
+					open-label="Open controls"
+					close-label="Close controls"
+					@toggle="panelOpen = !panelOpen"
+				/>
+			</div>
+			<div class="ui-panel-body">
+				<GpxControlsPanel
+					v-model:settings="settings"
+					v-model:export-scale="exportScale"
+					:file-name="fileName"
+					:stats-line="statsLine"
+					:export-size-label="exportSizeLabel"
+					:track="track"
+					@upload="openFilePicker"
+					@reset="resetSettings"
+					@download-png="downloadPng"
+					@download-svg="downloadSvg"
+					@copy-png="copyPng"
+					@copy-svg="copySvg"
+				/>
+			</div>
 		</aside>
 
 		<section
@@ -346,20 +346,11 @@ onUnmounted(() => {
 
 			<p
 				v-if="errorMessage"
-				class="absolute bottom-4 left-3 z-[2] max-w-[calc(100%-1.5rem)] rounded-[var(--radius)] bg-dark-greeny/90 px-3 py-2 text-[12px] text-accent-orange"
+				class="absolute bottom-4 left-3 z-[2] max-w-[calc(100%-1.5rem)] border border-[var(--line)] bg-dark-greeny/90 px-3 py-2 text-[12px] text-orange"
 				:style="{ marginLeft: 'var(--safe-left)', marginBottom: 'var(--safe-bottom)' }"
 			>
 				{{ errorMessage }}
 			</p>
-
-			<button
-				type="button"
-				class="ui-fab absolute top-3 left-3 md:hidden"
-				:style="{ marginLeft: 'var(--safe-left)' }"
-				@click="panelOpen = !panelOpen"
-			>
-				{{ panelOpen ? 'Close' : 'Controls' }}
-			</button>
 		</section>
 
 		<input

@@ -22,14 +22,14 @@ type CreateImageSessionOptions = {
 
 /**
  * Parses a CSS hex color into a Three.js Color.
- * @param hex - Hex string like #E8FF2A
+ * @param hex - Hex string like #FFFF11
  * @returns Three color instance
  */
 const parseColor = (hex: string): THREE.Color => {
 	try {
 		return new THREE.Color(hex)
 	} catch {
-		return new THREE.Color('#E8FF2A')
+		return new THREE.Color('#FFFF11')
 	}
 }
 

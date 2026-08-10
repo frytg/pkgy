@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import ControlsPanel from '../../components/ControlsPanel.vue'
 import HalftoneViewport from '../../components/HalftoneViewport.vue'
+import PanelToggle from '../../components/PanelToggle.vue'
 import { fitExportSize, getExportScaleOption } from '../../engine/export-size.ts'
 import { copyImageBlob, downloadBlob, downloadText, loadImage, loadImageFromFile } from '../../engine/image-io.ts'
 import { DEFAULT_SETTINGS, type HalftoneSettings } from '../../engine/settings.ts'
@@ -259,32 +260,31 @@ onUnmounted(() => {
 
 <template>
 	<div class="relative flex h-full bg-mid-dark-greeny">
-		<button
-			v-if="panelOpen"
-			type="button"
-			class="ui-panel-backdrop md:hidden"
-			aria-label="Close controls"
-			@click="panelOpen = false"
-		/>
-
-		<aside
-			v-show="panelOpen"
-			class="ui-panel-shell absolute inset-y-0 left-0 max-w-full pl-[var(--safe-left)] md:static md:max-w-none md:shrink-0"
-		>
-			<ControlsPanel
-				v-model:settings="settings"
-				v-model:export-scale="exportScale"
-				v-model:export-background="exportBackground"
-				:file-name="fileName"
-				:export-size-label="exportSizeLabel"
-				@upload="openFilePicker"
-				@reset="resetSettings"
-				@swap-colors="swapColors"
-				@download-png="downloadPng"
-				@download-svg="downloadSvg"
-				@copy-png="copyPng"
-				@copy-svg="copySvg"
-			/>
+		<aside class="ui-panel-shell" :class="{ 'is-collapsed': !panelOpen }">
+			<div class="ui-panel-toggle-row">
+				<PanelToggle
+					:open="panelOpen"
+					open-label="Open controls"
+					close-label="Close controls"
+					@toggle="panelOpen = !panelOpen"
+				/>
+			</div>
+			<div class="ui-panel-body">
+				<ControlsPanel
+					v-model:settings="settings"
+					v-model:export-scale="exportScale"
+					v-model:export-background="exportBackground"
+					:file-name="fileName"
+					:export-size-label="exportSizeLabel"
+					@upload="openFilePicker"
+					@reset="resetSettings"
+					@swap-colors="swapColors"
+					@download-png="downloadPng"
+					@download-svg="downloadSvg"
+					@copy-png="copyPng"
+					@copy-svg="copySvg"
+				/>
+			</div>
 		</aside>
 
 		<section
@@ -295,15 +295,6 @@ onUnmounted(() => {
 			@drop="onDrop"
 		>
 			<HalftoneViewport ref="viewportRef" :image="image" :settings="settings" />
-
-			<button
-				type="button"
-				class="ui-fab absolute top-3 left-3 md:hidden"
-				:style="{ marginLeft: 'var(--safe-left)' }"
-				@click="panelOpen = !panelOpen"
-			>
-				{{ panelOpen ? 'Close' : 'Controls' }}
-			</button>
 		</section>
 
 		<input

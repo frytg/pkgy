@@ -11,7 +11,7 @@ defineEmits<{
 </script>
 
 <template>
-	<div class="grid grid-cols-[64px_1fr] items-center gap-3 text-[13px] text-primary/70">
+	<div class="grid grid-cols-[64px_1fr] items-center gap-3 text-[13px] text-off-white/70">
 		<span>{{ label }}</span>
 		<div class="ui-seg">
 			<button

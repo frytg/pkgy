@@ -21,7 +21,7 @@ const onHexInput = (value: string): void => {
 </script>
 
 <template>
-	<label class="grid grid-cols-[64px_1fr] items-center gap-3 text-[13px] text-primary/70">
+	<label class="grid grid-cols-[64px_1fr] items-center gap-3 text-[13px] text-off-white/70">
 		<span>{{ label }}</span>
 		<div class="ui-field flex items-center gap-2">
 			<input
@@ -32,7 +32,7 @@ const onHexInput = (value: string): void => {
 			/>
 			<input
 				type="text"
-				class="w-full bg-transparent font-mono text-[12px] tracking-wide text-primary/80 uppercase outline-none"
+				class="w-full bg-transparent font-mono text-[12px] tracking-wide text-off-white/80 uppercase outline-none"
 				:value="modelValue"
 				spellcheck="false"
 				@change="onHexInput(($event.target as HTMLInputElement).value)"

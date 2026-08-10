@@ -14,7 +14,7 @@ defineEmits<{
 </script>
 
 <template>
-	<label class="grid grid-cols-[4.5rem_1fr_2.5rem] items-center gap-2 text-[13px] text-primary/70 sm:gap-3">
+	<label class="grid grid-cols-[4.5rem_1fr_2.5rem] items-center gap-2 text-[13px] text-off-white/70 sm:gap-3">
 		<span>{{ label }}</span>
 		<input
 			type="range"

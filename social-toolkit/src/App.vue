@@ -14,7 +14,7 @@ const activeTool = computed(() => getFleetTool(activeToolId.value))
 		>
 			<div class="min-w-0 shrink-0">
 				<p class="text-[11px] font-medium tracking-[0.12em] text-[var(--faint)] uppercase">FRYTG socials</p>
-				<p class="truncate text-[13px] text-primary/90">{{ activeTool.label }}</p>
+				<p class="truncate text-[13px] text-off-white/90">{{ activeTool.label }}</p>
 				<p class="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 text-[11px] text-[var(--faint)]">
 					<a class="ui-link" href="https://www.frytg.digital" target="_blank" rel="noopener noreferrer"
 						>www.frytg.digital</a

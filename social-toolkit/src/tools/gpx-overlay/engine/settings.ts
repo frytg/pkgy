@@ -23,7 +23,7 @@ export const DEFAULT_GPX_SETTINGS: GpxOverlaySettings = {
 		elevation: false,
 		heartRate: false,
 	},
-	strokeColor: '#E8FF2A',
+	strokeColor: '#FFFF11',
 	elevationColor: '#D6E1CB',
 	heartRateColor: '#F09139',
 	strokeWidth: 3,

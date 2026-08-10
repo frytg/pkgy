@@ -52,7 +52,9 @@ const decimal =
 			<section class="mb-7 sm:mb-9">
 				<button type="button" class="group block w-full text-left" :title="fileName" @click="$emit('upload')">
 					<span class="ui-label mb-2 block">Image</span>
-					<span class="block truncate text-[13px] text-primary/90 transition-colors group-hover:text-yellow">
+					<span
+						class="block truncate text-[13px] text-off-white/90 transition-colors group-hover:text-yellow"
+					>
 						{{ fileName }}
 					</span>
 					<span class="mt-1.5 block text-[12px] text-[var(--faint)]"> Drop, paste, or click to replace </span>
@@ -186,10 +188,10 @@ const decimal =
 
 			<section>
 				<h2 class="ui-label mb-4">Output</h2>
-				<label class="mb-2 grid grid-cols-[64px_1fr] items-center gap-3 text-[13px] text-primary/70">
+				<label class="mb-2 grid grid-cols-[64px_1fr] items-center gap-3 text-[13px] text-off-white/70">
 					<span>Scale</span>
 					<select
-						class="ui-field w-full border-none bg-transparent text-[13px] text-primary/90 outline-none"
+						class="ui-field w-full border-none bg-transparent text-[13px] text-off-white/90 outline-none"
 						:value="exportScale"
 						@change="$emit('update:exportScale', ($event.target as HTMLSelectElement).value)"
 					>
@@ -203,7 +205,7 @@ const decimal =
 					</select>
 				</label>
 				<p class="mb-5 font-mono text-[11px] text-[var(--faint)] tabular-nums">{{ exportSizeLabel }}</p>
-				<label class="flex min-h-11 items-center justify-between text-[13px] text-primary/70 sm:min-h-0">
+				<label class="flex min-h-11 items-center justify-between text-[13px] text-off-white/70 sm:min-h-0">
 					<span>Include background</span>
 					<button
 						type="button"

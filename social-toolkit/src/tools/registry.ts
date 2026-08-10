@@ -1,6 +1,7 @@
 import type { Component } from 'vue'
 
 import GpxOverlayTool from './gpx-overlay/GpxOverlayTool.vue'
+import GpxViewerTool from './gpx-viewer/GpxViewerTool.vue'
 import HalftoneTool from './halftone/HalftoneTool.vue'
 
 /** One instrument in the social-image fleet. */
@@ -24,6 +25,12 @@ export const FLEET_TOOLS: FleetTool[] = [
 		label: 'GPX Overlay',
 		blurb: 'Transparent track · elevation · heart rate',
 		component: GpxOverlayTool,
+	},
+	{
+		id: 'gpx-viewer',
+		label: 'GPX Viewer',
+		blurb: 'Interactive map · profiles · zones · splits',
+		component: GpxViewerTool,
 	},
 ]
 

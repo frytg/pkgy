@@ -46,7 +46,7 @@ export const DEFAULT_SETTINGS: HalftoneSettings = {
 	randomness: 0,
 	toneTarget: 'light',
 	imageContrast: 1.1,
-	dashColor: '#E8FF2A',
+	dashColor: '#FFFF11',
 	backgroundColor: '#171D15',
 	previewDistance: 5.5,
 	imageFit: 'contain',

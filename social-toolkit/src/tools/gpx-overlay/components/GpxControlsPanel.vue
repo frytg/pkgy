@@ -62,7 +62,9 @@ const decimal =
 			<section class="mb-7 sm:mb-9">
 				<button type="button" class="group block w-full text-left" :title="fileName" @click="$emit('upload')">
 					<span class="ui-label mb-2 block">GPX</span>
-					<span class="block truncate text-[13px] text-primary/90 transition-colors group-hover:text-yellow">
+					<span
+						class="block truncate text-[13px] text-off-white/90 transition-colors group-hover:text-yellow"
+					>
 						{{ fileName }}
 					</span>
 					<span class="mt-1.5 block text-[12px] text-[var(--faint)]">{{ statsLine }}</span>
@@ -72,7 +74,7 @@ const decimal =
 			<section class="mb-7 sm:mb-9">
 				<h2 class="ui-label mb-4">Layers</h2>
 				<div class="space-y-4">
-					<label class="flex min-h-11 items-center justify-between text-[13px] text-primary/70 sm:min-h-0">
+					<label class="flex min-h-11 items-center justify-between text-[13px] text-off-white/70 sm:min-h-0">
 						<span>GPS track</span>
 						<button
 							type="button"
@@ -84,7 +86,7 @@ const decimal =
 							<span class="ui-toggle-knob" />
 						</button>
 					</label>
-					<label class="flex min-h-11 items-center justify-between text-[13px] text-primary/70 sm:min-h-0">
+					<label class="flex min-h-11 items-center justify-between text-[13px] text-off-white/70 sm:min-h-0">
 						<span :class="{ 'opacity-40': track && !track.hasElevation }">Elevation</span>
 						<button
 							type="button"
@@ -97,7 +99,7 @@ const decimal =
 							<span class="ui-toggle-knob" />
 						</button>
 					</label>
-					<label class="flex min-h-11 items-center justify-between text-[13px] text-primary/70 sm:min-h-0">
+					<label class="flex min-h-11 items-center justify-between text-[13px] text-off-white/70 sm:min-h-0">
 						<span :class="{ 'opacity-40': track && !track.hasHeartRate }">Heart rate</span>
 						<button
 							type="button"
@@ -137,7 +139,7 @@ const decimal =
 						:format="(value) => String(Math.round(value))"
 						@update:model-value="patchSettings({ padding: $event })"
 					/>
-					<label class="flex min-h-11 items-center justify-between text-[13px] text-primary/70 sm:min-h-0">
+					<label class="flex min-h-11 items-center justify-between text-[13px] text-off-white/70 sm:min-h-0">
 						<span>Start / end</span>
 						<button
 							type="button"
@@ -178,10 +180,10 @@ const decimal =
 				<p class="mb-4 text-[12px] text-[var(--faint)]">
 					Canvas matches the route aspect — transparent PNG / SVG for photo overlays.
 				</p>
-				<label class="mb-2 grid grid-cols-[64px_1fr] items-center gap-3 text-[13px] text-primary/70">
+				<label class="mb-2 grid grid-cols-[64px_1fr] items-center gap-3 text-[13px] text-off-white/70">
 					<span>Scale</span>
 					<select
-						class="ui-field w-full border-none bg-transparent text-[13px] text-primary/90 outline-none"
+						class="ui-field w-full border-none bg-transparent text-[13px] text-off-white/90 outline-none"
 						:value="exportScale"
 						@change="$emit('update:exportScale', ($event.target as HTMLSelectElement).value)"
 					>
