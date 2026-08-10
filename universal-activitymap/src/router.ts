@@ -67,3 +67,31 @@ export const createProviderRouter = (provider: ActivityProvider): Hono => {
 
 	return router
 }
+
+/**
+ * Builds the JSON data sub-router for one activity provider, mounted at `/data/<name>` in `src/app.ts`.
+ * Exposes the raw normalized activity data — the exact `ActivityDay[]` used to render the SVG charts —
+ * so other sites can fetch and render the data themselves. No theme/weeks present here; that's
+ * presentation, this is the underlying dataset.
+ * @param provider - activity provider to expose
+ * @returns hono router serving `GET /:username` as JSON
+ */
+export const createProviderDataRouter = (provider: ActivityProvider): Hono => {
+	const router = new Hono()
+
+	router.get('/:username', async (c) => {
+		const username = c.req.param('username')
+		try {
+			const days = await provider.fetchStats(username)
+			if (days.length === 0) {
+				return c.json({ error: `no activity data found for '${username}' on ${provider.name}` }, 404)
+			}
+			return c.json(days, 200, { 'cache-control': 'public, max-age=3600' })
+		} catch (error) {
+			const message = error instanceof Error ? error.message : String(error)
+			return c.json({ error: message }, 502)
+		}
+	})
+
+	return router
+}

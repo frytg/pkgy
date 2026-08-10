@@ -51,6 +51,25 @@ curl 'http://localhost:3000/github/frytg?theme=bluesky-auto&weeks=14&style=round
 
 Unknown themes/styles or out-of-range `weeks` return `400` with the available options in the JSON body.
 
+### JSON data API
+
+The exact normalized dataset used to render each chart is also served as JSON, so other sites can fetch and render the data themselves:
+
+```
+GET /data/:provider/:username
+```
+
+`provider` and `username` match the chart routes above. Returns `application/json` — a bare `ActivityDay[]`, each entry `{ "date": "YYYY-MM-DD", "level": 0–4 }` sorted ascending — with the same 1h cache header.
+
+```sh
+curl http://localhost:3000/data/github/frytg
+curl http://localhost:3000/data/tangled/frytg.digital
+curl http://localhost:3000/data/mastodon/frytg@beoriginal.social
+curl http://localhost:3000/data/bluesky/frytg.digital
+```
+
+Errors match the SVG endpoints: `404` when no activity data was found, `502` when the upstream provider request failed. Both the chart and data routes sit behind the allow-all CORS middleware, so they can be fetched cross-origin from any site.
+
 ## Live examples
 
 Deployed at <https://universal-activitymap.frytg.deno.net>. Each route returns an SVG you can drop straight into an `<img>` or markdown:
