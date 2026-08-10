@@ -8,7 +8,7 @@
 	"trailingComma": "all",
 	"endOfLine": "lf",
 	"insertFinalNewline": true,
-	"ignorePatterns": ["dist/**", "node_modules/**", "public/**", "input/**", "aube-lock.yaml", "package-lock.json"],
+	"ignorePatterns": ["dist/**", "node_modules/**", "public/**", "aube-lock.yaml", "package-lock.json", "*.gpx"],
 	"sortTailwindcss": {
 		"stylesheet": "src/style.css",
 		"attributes": [":class"]
