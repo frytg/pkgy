@@ -1,0 +1,54 @@
+{
+	$schema: 'https://docs.renovatebot.com/renovate-schema.json',
+	extends: [
+		'config:recommended',
+		// Approve updates from the Dependency Dashboard before PRs are opened
+		// (keeps noise low — pick what to update from one issue).
+		':dependencyDashboardApproval',
+		':semanticCommits',
+		':semanticCommitTypeAll(chore)',
+	],
+	labels: ['dependencies', 'maintenance'],
+	timezone: 'Europe/Berlin',
+	schedule: ['before 9am every 2 days'],
+	// Match mise/aube/bun: wait 3 days before suggesting newly published versions.
+	minimumReleaseAge: '3 days',
+	internalChecksFilter: 'strict',
+	prConcurrentLimit: 10,
+	prHourlyLimit: 5,
+	// Native `aube` manager is not released yet (renovatebot/renovate#44428);
+	// npm updates package.json only — regenerate aube-lock.yaml with `just install`
+	// / `aube install` when merging until that lands.
+	enabledManagers: ['npm', 'dockerfile', 'github-actions', 'mise', 'cargo'],
+	lockFileMaintenance: {
+		enabled: false,
+	},
+	packageRules: [
+		{
+			description: 'npm / JS packages',
+			matchManagers: ['npm'],
+			addLabels: ['javascript'],
+		},
+		{
+			description: 'Docker base images',
+			matchManagers: ['dockerfile'],
+			addLabels: ['docker'],
+		},
+		{
+			description: 'GitHub Actions',
+			matchManagers: ['github-actions'],
+			addLabels: ['github_actions'],
+		},
+		{
+			description: 'Rust crates',
+			matchManagers: ['cargo'],
+			addLabels: ['rust'],
+		},
+		{
+			description: 'Group non-major updates per manager to cut PR count',
+			matchUpdateTypes: ['minor', 'patch'],
+			groupName: '{{manager}} non-major',
+			groupSlug: '{{manager}}-non-major',
+		},
+	],
+}
