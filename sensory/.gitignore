@@ -1,0 +1,7 @@
+debug/
+demo/
+target/
+**/*.rs.bk
+*.pdb
+sensor-config.json
+.DS_Store
